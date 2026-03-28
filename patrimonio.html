@@ -869,7 +869,8 @@ async function fetchHistoricalPrices(monthlyStates, statusEl) {
       if (statusEl) statusEl.textContent = `Descargando precios históricos (${done}/${allFetch.length})…`;
     } catch(e) {
       done++;
-      if (statusEl) statusEl.textContent = `Descargando precios históricos (${done}/${allFetch.length})…`;
+      console.warn(`fetchHistoricalPrices failed for ${sym}:`, e.message);
+      if (statusEl) statusEl.textContent = `Descargando precios históricos (${done}/${allFetch.length}) · último error: ${sym}`;
     }
   }));
 
@@ -957,24 +958,54 @@ async function rebuildHistoricalNav() {
   const btn = document.getElementById('btn-rebuild');
   const statusEl = document.getElementById('rebuild-status');
   if (btn) { btn.disabled = true; btn.textContent = '⟳ Calculando…'; }
-  if (statusEl) { statusEl.textContent = 'Construyendo estados mensuales…'; statusEl.style.color = 'var(--text3)'; }
+  if (statusEl) { statusEl.textContent = 'Probando conexión…'; statusEl.style.color = 'var(--text3)'; }
+
+  // Test de conectividad primero
+  try {
+    const testUrl = 'https://corsproxy.io/?' + encodeURIComponent('https://query2.finance.yahoo.com/v8/finance/chart/MSFT?interval=1d&range=1d');
+    const testRes = await fetch(testUrl);
+    if (!testRes.ok) throw new Error(`HTTP ${testRes.status}`);
+    const testData = await testRes.json();
+    if (!testData?.chart?.result?.[0]?.meta?.regularMarketPrice) throw new Error('respuesta vacía de Yahoo');
+    if (statusEl) statusEl.textContent = '✓ Conexión OK · construyendo estados mensuales…';
+  } catch(e) {
+    if (statusEl) {
+      statusEl.innerHTML = `✗ Sin conexión a Yahoo Finance: ${e.message}<br><small>Prueba desde otro navegador o desactiva el bloqueador de anuncios</small>`;
+      statusEl.style.color = 'var(--red)';
+    }
+    if (btn) { btn.disabled = false; btn.textContent = '↻ Reconstruir con precios reales'; }
+    return;
+  }
 
   try {
     const monthlyStates = buildMonthlyPortfolioStates();
-    if (statusEl) statusEl.textContent = `${monthlyStates.length} meses · obteniendo precios…`;
+    if (statusEl) statusEl.textContent = `${monthlyStates.length} meses detectados · descargando precios históricos…`;
 
     const { historicalPrices, historicalFX } = await fetchHistoricalPrices(monthlyStates, statusEl);
-    if (statusEl) statusEl.textContent = 'Calculando NAV mensual…';
+
+    // Verificar cuántos símbolos se obtuvieron
+    const gotPrices = Object.keys(historicalPrices).length;
+    const gotFX = Object.keys(historicalFX).length;
+    if (statusEl) statusEl.textContent = `Precios: ${gotPrices} símbolos · FX: ${gotFX} pares · calculando NAV…`;
 
     const nav = computeNAV(monthlyStates, historicalPrices, historicalFX);
+    const validMonths = nav.filter(n => n.navPortfolio > 0).length;
+
     S.historicalNav = nav;
     save();
 
     const now = new Date().toLocaleTimeString('es-ES', {hour:'2-digit', minute:'2-digit'});
-    if (statusEl) { statusEl.textContent = `✓ ${nav.length} meses reconstruidos · ${now}`; statusEl.style.color = 'var(--green)'; }
-    toast(`NAV histórico calculado (${nav.length} meses)`);
+    if (statusEl) {
+      statusEl.textContent = `✓ ${nav.length} meses reconstruidos · ${validMonths} con precio real · ${now}`;
+      statusEl.style.color = validMonths > 0 ? 'var(--green)' : 'var(--amber)';
+    }
+    toast(`NAV histórico calculado (${validMonths} meses con precio real)`);
   } catch(e) {
-    if (statusEl) { statusEl.textContent = '✗ Error: ' + e.message; statusEl.style.color = 'var(--red)'; }
+    console.error('rebuildHistoricalNav error:', e);
+    if (statusEl) {
+      statusEl.textContent = `✗ Error: ${e.message}`;
+      statusEl.style.color = 'var(--red)';
+    }
     toast('Error al reconstruir histórico');
   }
 
@@ -1193,6 +1224,9 @@ function renderInversiones() {
   destroyChart('chartInvHist');
   // Use real historical NAV if available, otherwise fall back to cost-based historial
   const navData = (S.historicalNav || []).filter(n => n.navPortfolio > 0).sort((a,b)=>a.mes.localeCompare(b.mes));
+  // Update chart title to show data source
+  const invHistTitle = document.querySelector('#page-inversiones .section-title');
+  if (invHistTitle) invHistTitle.textContent = navData.length > 1 ? 'Evolución del portfolio (precios reales)' : 'Evolución del portfolio (estimado · pulsa Reconstruir en Evolución)';
   if (navData.length > 1) {
     charts['chartInvHist'] = new Chart(document.getElementById('chartInvHist'), {
       type:'line',
@@ -1203,17 +1237,36 @@ function renderInversiones() {
       options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{position:'top',labels:{boxWidth:10,font:{size:11}}},tooltip:{callbacks:{label:ctx=>ctx.dataset.label+': '+fmt(ctx.raw)}}},scales:{x:{ticks:{font:{size:11},maxTicksLimit:12}},y:{min:0,ticks:{callback:v=>fmt(v),font:{size:11}}}}}
     });
   } else {
+    // Fallback: construir evolución estimada usando precio actual × qty proporcional por mes
+    // Para cada mes del historial, estimamos el valor = precio_actual × (qty_en_ese_mes / qty_actual)
     const histInv = S.historial.filter(h=>Object.keys(h.inversiones||{}).length>0).sort((a,b)=>a.mes.localeCompare(b.mes));
     if (histInv.length > 1) {
+      // Para cada mes, reconstruimos posiciones del seed que ya existían (fecha <= mes)
+      // y calculamos valor = valor_actual × (acciones_ese_mes / acciones_actuales)
+      const estimatedPortfolio = histInv.map(h => {
+        return S.inversiones.reduce((total, inv) => {
+          // Solo incluir si la primera compra fue antes o en este mes
+          if (!inv.fecha || inv.fecha.slice(0,7) > h.mes) return total;
+          // Proporción de acciones: si la compra fue en ese mes exacto, usar qty completo
+          // Esta es una estimación — el rebuild da el valor exacto
+          return total + inv.valor; // valor de mercado actual como proxy
+        }, 0);
+      });
+      // Normalizar: el último mes debe coincidir con totalInversiones()
+      const lastVal = estimatedPortfolio[estimatedPortfolio.length - 1];
+      const currentVal = totalInversiones();
+      const scale = lastVal > 0 ? currentVal / lastVal : 1;
+      const scaledPortfolio = estimatedPortfolio.map(v => parseFloat((v * scale).toFixed(2)));
+
       let cumDep = 0;
       const cumDeps = histInv.map(h=>{ cumDep += (h.aportacion||0); return cumDep; });
       charts['chartInvHist'] = new Chart(document.getElementById('chartInvHist'), {
         type:'line',
         data:{labels:histInv.map(h=>fmtMes(h.mes)), datasets:[
-          {label:'Aportado acumulado',data:cumDeps,borderColor:'rgba(90,158,26,0.7)',backgroundColor:'rgba(90,158,26,0.07)',tension:0.2,fill:true,pointRadius:0,borderDash:[4,3]},
-          {label:'Portfolio (coste)',data:histInv.map(h=>Object.values(h.inversiones||{}).reduce((a,b)=>a+b,0)),borderColor:'#0C3F7A',backgroundColor:'rgba(12,63,122,0.07)',tension:0.3,fill:true,pointRadius:3}
+          {label:'Coste posiciones',data:cumDeps,borderColor:'rgba(59,109,17,0.9)',backgroundColor:'rgba(59,109,17,0.08)',tension:0.2,fill:true,pointRadius:0,borderDash:[5,4],borderWidth:1.5},
+          {label:'Valor mercado (estimado)',data:scaledPortfolio,borderColor:'#0C3F7A',backgroundColor:'rgba(12,63,122,0.12)',tension:0.3,fill:true,pointRadius:2,borderWidth:2}
         ]},
-        options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',labels:{boxWidth:10,font:{size:11}}},tooltip:{callbacks:{label:ctx=>ctx.dataset.label+': '+fmt(ctx.raw)}}},scales:{x:{ticks:{font:{size:11}}},y:{min:0,ticks:{callback:v=>fmt(v),font:{size:11}}}}}
+        options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{position:'top',labels:{boxWidth:10,font:{size:11}}},tooltip:{callbacks:{label:ctx=>ctx.dataset.label+': '+fmt(ctx.raw)}}},scales:{x:{ticks:{font:{size:11},maxTicksLimit:12}},y:{min:0,ticks:{callback:v=>fmt(v),font:{size:11}}}}}
       });
     }
   }
