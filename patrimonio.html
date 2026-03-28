@@ -824,9 +824,35 @@ function buildMonthlyPortfolioStates() {
 }
 
 // ── Step 2: fetch historical monthly closing prices from Yahoo Finance ────────
-// Groups symbols by yahoo ticker, fetches full range in one call per ticker.
+// Tries multiple CORS proxies in cascade — if one fails, tries the next.
+const CORS_PROXIES = [
+  url => `https://corsproxy.io/?${encodeURIComponent(url)}`,
+  url => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
+  url => `https://thingproxy.freeboard.io/fetch/${url}`,
+  url => `https://cors-anywhere.herokuapp.com/${url}`,
+];
+
+async function fetchWithProxy(url, timeoutMs = 8000) {
+  for (const proxyFn of CORS_PROXIES) {
+    try {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), timeoutMs);
+      const r = await fetch(proxyFn(url), { signal: controller.signal });
+      clearTimeout(timer);
+      if (!r.ok) throw new Error(`HTTP ${r.status}`);
+      const text = await r.text();
+      const d = JSON.parse(text);
+      // Validate it looks like a Yahoo response
+      if (d?.chart?.result?.[0] || d?.chart?.error) return d;
+      throw new Error('unexpected response shape');
+    } catch(e) {
+      console.warn(`Proxy failed for ${url.slice(0,60)}:`, e.message);
+    }
+  }
+  throw new Error('All proxies failed');
+}
+
 async function fetchHistoricalPrices(monthlyStates, statusEl) {
-  // Collect all yahoo symbols needed and date range
   const allSymbols = new Set();
   monthlyStates.forEach(s => Object.values(s.positions).forEach(p => allSymbols.add(p.yahooSym)));
 
@@ -834,43 +860,36 @@ async function fetchHistoricalPrices(monthlyStates, statusEl) {
   const startTs = Math.floor(new Date(firstMes + '-01').getTime() / 1000);
   const endTs = Math.floor(Date.now() / 1000) + 86400;
 
-  // Fetch FX rates for each month (we fetch current FX; for historical we use monthly close)
-  // Strategy: fetch monthly OHLCV for each FX pair too
   const fxSymbols = ['USDEUR=X', 'GBPEUR=X', 'DKKEUR=X', 'HKDEUR=X'];
-  const historicalFX = {}; // {symbol → {mes → rate}}
-  const historicalPrices = {}; // {yahooSym → {mes → priceInOriginalCurrency}}
-
+  const historicalFX = {};
+  const historicalPrices = {};
   const allFetch = [...allSymbols, ...fxSymbols];
-  let done = 0;
+  let done = 0, ok = 0;
 
-  if (statusEl) statusEl.textContent = `Descargando precios históricos (0/${allFetch.length})…`;
+  if (statusEl) statusEl.textContent = `Descargando ${allFetch.length} símbolos…`;
 
   await Promise.allSettled(allFetch.map(async sym => {
     try {
       const url = `https://query2.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(sym)}?interval=1mo&period1=${startTs}&period2=${endTs}`;
-      const r = await fetch('https://corsproxy.io/?' + encodeURIComponent(url));
-      const d = await r.json();
+      const d = await fetchWithProxy(url);
       const result = d?.chart?.result?.[0];
       if (!result) throw new Error('no result');
       const timestamps = result.timestamp || [];
       const closes = result.indicators?.adjclose?.[0]?.adjclose || result.indicators?.quote?.[0]?.close || [];
       const currency = result.meta?.currency || 'USD';
-
       const byMes = {};
       timestamps.forEach((ts, i) => {
         const mes = new Date(ts * 1000).toISOString().slice(0,7);
         if (closes[i] != null && !isNaN(closes[i])) byMes[mes] = { price: closes[i], currency };
       });
-
       if (fxSymbols.includes(sym)) historicalFX[sym] = byMes;
       else historicalPrices[sym] = byMes;
-
-      done++;
-      if (statusEl) statusEl.textContent = `Descargando precios históricos (${done}/${allFetch.length})…`;
+      ok++; done++;
+      if (statusEl) statusEl.textContent = `Descargando… ${done}/${allFetch.length} · ✓ ${ok} OK`;
     } catch(e) {
       done++;
-      console.warn(`fetchHistoricalPrices failed for ${sym}:`, e.message);
-      if (statusEl) statusEl.textContent = `Descargando precios históricos (${done}/${allFetch.length}) · último error: ${sym}`;
+      console.warn(`Failed ${sym}:`, e.message);
+      if (statusEl) statusEl.textContent = `Descargando… ${done}/${allFetch.length} · ✓ ${ok} OK`;
     }
   }));
 
@@ -960,17 +979,16 @@ async function rebuildHistoricalNav() {
   if (btn) { btn.disabled = true; btn.textContent = '⟳ Calculando…'; }
   if (statusEl) { statusEl.textContent = 'Probando conexión…'; statusEl.style.color = 'var(--text3)'; }
 
-  // Test de conectividad primero
+  // Test de conectividad — prueba todos los proxies
   try {
-    const testUrl = 'https://corsproxy.io/?' + encodeURIComponent('https://query2.finance.yahoo.com/v8/finance/chart/MSFT?interval=1d&range=1d');
-    const testRes = await fetch(testUrl);
-    if (!testRes.ok) throw new Error(`HTTP ${testRes.status}`);
-    const testData = await testRes.json();
+    const testYahooUrl = 'https://query2.finance.yahoo.com/v8/finance/chart/MSFT?interval=1d&range=1d';
+    if (statusEl) statusEl.textContent = 'Buscando proxy disponible…';
+    const testData = await fetchWithProxy(testYahooUrl, 6000);
     if (!testData?.chart?.result?.[0]?.meta?.regularMarketPrice) throw new Error('respuesta vacía de Yahoo');
     if (statusEl) statusEl.textContent = '✓ Conexión OK · construyendo estados mensuales…';
   } catch(e) {
     if (statusEl) {
-      statusEl.innerHTML = `✗ Sin conexión a Yahoo Finance: ${e.message}<br><small>Prueba desde otro navegador o desactiva el bloqueador de anuncios</small>`;
+      statusEl.innerHTML = `✗ Todos los proxies fallaron: ${e.message}<br><small>Intenta desactivar el bloqueador de anuncios o usar otro navegador</small>`;
       statusEl.style.color = 'var(--red)';
     }
     if (btn) { btn.disabled = false; btn.textContent = '↻ Reconstruir con precios reales'; }
@@ -1070,20 +1088,46 @@ function renderHistorial() {
         scales: { x:{ ticks:{ font:{size:11}, maxTicksLimit:14 } }, y:{ min:0, ticks:{ callback: v => fmt(v), font:{size:11} } } } }
     });
   } else {
-    // Fallback: use manual historial with cost values
-    const totales = hist.map(h => sumHist(h));
-    let cumInv = 0;
-    const cumInvArr = hist.map(h => { cumInv += (h.aportacion||0); return cumInv; });
+    // Fallback: estimar valor de mercado usando precio actual × acciones que ya tenías cada mes
+    const estimatedPortfolio = hist.map(h => {
+      return S.inversiones.reduce((total, inv) => {
+        if (!inv.fecha || inv.fecha.slice(0,7) > h.mes) return total;
+        return total + inv.valor;
+      }, 0);
+    });
+    // Escalar para que el último mes coincida con el valor actual de mercado
+    const lastVal = estimatedPortfolio[estimatedPortfolio.length - 1] || 1;
+    const scale = totalInversiones() / lastVal;
+    const scaledPortfolio = estimatedPortfolio.map(v => parseFloat((v * scale).toFixed(2)));
+
+    // Efectivo estimado por mes: depósitos acumulados - coste de posiciones abiertas ese mes
+    const cashEstimated = hist.map(h => {
+      let cumDep = 0;
+      hist.forEach(hh => { if (hh.mes <= h.mes) cumDep += (hh.aportacion||0); });
+      const invCost = S.inversiones.reduce((t, inv) => {
+        if (!inv.fecha || inv.fecha.slice(0,7) > h.mes) return t;
+        return t + inv.coste;
+      }, 0);
+      return Math.max(0, cumDep - invCost);
+    });
+
+    let cumDep = 0;
+    const cumInvArr = hist.map(h => { cumDep += (h.aportacion||0); return cumDep; });
+    const totalEstimated = scaledPortfolio.map((v, i) => parseFloat((v + cashEstimated[i]).toFixed(2)));
+
     charts['chartHist'] = new Chart(document.getElementById('chartHist'), {
       type:'line', data:{labels: hist.map(h=>fmtMes(h.mes)), datasets:[
-        {label:'Portfolio (coste)',data:totales,borderColor:'#1A1916',backgroundColor:'rgba(26,25,22,0.05)',tension:0.3,fill:true,pointRadius:3},
-        {label:'Capital invertido',data:cumInvArr,borderColor:'#3B6D11',backgroundColor:'transparent',tension:0.2,fill:false,borderDash:[5,4],pointRadius:0}
+        {label:'Valor total (estimado)', data:totalEstimated, borderColor:'#1A1916', backgroundColor:'rgba(26,25,22,0.05)', tension:0.3, fill:true, pointRadius:2, borderWidth:2},
+        {label:'Portfolio acciones', data:scaledPortfolio, borderColor:'#0C3F7A', backgroundColor:'transparent', tension:0.3, fill:false, pointRadius:0, borderWidth:1.5},
+        {label:'Efectivo IBKR', data:cashEstimated, borderColor:'#3B6D11', backgroundColor:'transparent', tension:0.2, fill:false, borderDash:[4,3], pointRadius:0, borderWidth:1.5},
+        {label:'Total depositado', data:cumInvArr, borderColor:'#A09F9B', backgroundColor:'transparent', tension:0.2, fill:false, borderDash:[2,4], pointRadius:0, borderWidth:1}
       ]},
-      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',labels:{boxWidth:10,font:{size:11}}},tooltip:{callbacks:{label:ctx=>ctx.dataset.label+': '+fmt(ctx.raw)}}},scales:{x:{ticks:{font:{size:11}}},y:{ticks:{callback:v=>fmt(v),font:{size:11}}}}}
+      options:{responsive:true, maintainAspectRatio:false, interaction:{mode:'index',intersect:false},
+        plugins:{legend:{position:'top',labels:{boxWidth:10,font:{size:11}}}, tooltip:{callbacks:{label:ctx=>ctx.dataset.label+': '+fmt(ctx.raw)}}},
+        scales:{x:{ticks:{font:{size:11},maxTicksLimit:14}}, y:{min:0, ticks:{callback:v=>fmt(v),font:{size:11}}}}}
     });
-    // Show hint
     const s = document.getElementById('rebuild-status');
-    if (s && !s.textContent) s.textContent = '⚠ Pulsa "Reconstruir" para ver precios reales de mercado';
+    if (s && !s.textContent) s.textContent = '⚠ Estimado con precios actuales · pulsa Reconstruir para precios históricos reales';
   }
 
   // Monthly returns bar chart
