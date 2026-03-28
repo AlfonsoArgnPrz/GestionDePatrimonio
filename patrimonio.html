@@ -816,7 +816,9 @@ function buildMonthlyPortfolioStates() {
       }
     }
 
-    results.push({ mes, positions: snap, cumDeposited });
+    // cumSpent = total cost of all current open positions (to derive cash)
+    const cumSpent = Object.values(positions).filter(p=>p.qty>0.001).reduce((a,p)=>a+p.totalCost,0);
+    results.push({ mes, positions: snap, cumDeposited, cumSpent });
   }
   return results;
 }
@@ -911,6 +913,7 @@ function computeNAV(monthlyStates, historicalPrices, historicalFX) {
     return rate ? price * rate : null;
   };
 
+  const nowMes = new Date().toISOString().slice(0,7);
   return monthlyStates.map(state => {
     let navPortfolio = 0;
     let covered = 0, total = Object.keys(state.positions).length;
@@ -924,14 +927,23 @@ function computeNAV(monthlyStates, historicalPrices, historicalFX) {
       covered++;
     }
 
-    // Add cash from IBKR (tracked via S.cuentas or fixed amount)
-    const cashVal = S.cuentas.reduce((a,c) => a + (c.banco === 'Interactive Brokers' ? c.valor : 0), 0);
-    const nav = navPortfolio + (state.mes === new Date().toISOString().slice(0,7) ? cashVal : 0);
+    // Cash IBKR per month = deposits accumulated - cost of open positions
+    // For current month use actual account cash value
+    let navCash;
+    if (state.mes === nowMes) {
+      navCash = S.cuentas.reduce((a,c) => a + (c.banco === 'Interactive Brokers' ? c.valor : 0), 0);
+    } else {
+      // cumSpent = cost basis of all open positions at that month-end
+      navCash = Math.max(0, state.cumDeposited - (state.cumSpent || 0));
+    }
+
+    const nav = navPortfolio + navCash;
 
     return {
       mes: state.mes,
       nav: parseFloat(nav.toFixed(2)),
       navPortfolio: parseFloat(navPortfolio.toFixed(2)),
+      navCash: parseFloat(navCash.toFixed(2)),
       invested: state.cumDeposited,
       coverage: total > 0 ? Math.round(covered/total*100) : 0,
       source: covered > 0 ? 'yahoo' : 'estimado'
@@ -1015,8 +1027,10 @@ function renderHistorial() {
     charts['chartHist'] = new Chart(document.getElementById('chartHist'), {
       type: 'line',
       data: { labels, datasets: [
-        { label: 'Valor mercado', data: nav.map(n => n.nav), borderColor: '#1A1916', backgroundColor: 'rgba(26,25,22,0.06)', tension: 0.3, fill: true, pointRadius: 2, pointHoverRadius: 5 },
-        { label: 'Capital invertido', data: nav.map(n => n.invested), borderColor: '#3B6D11', backgroundColor: 'transparent', tension: 0.2, fill: false, borderDash: [5,4], pointRadius: 0 }
+        { label: 'Valor total', data: nav.map(n => n.nav), borderColor: '#1A1916', backgroundColor: 'rgba(26,25,22,0.05)', tension: 0.3, fill: true, pointRadius: 2, pointHoverRadius: 5, borderWidth: 2 },
+        { label: 'Portfolio acciones', data: nav.map(n => n.navPortfolio), borderColor: '#0C3F7A', backgroundColor: 'transparent', tension: 0.3, fill: false, pointRadius: 0, borderWidth: 1.5 },
+        { label: 'Efectivo IBKR', data: nav.map(n => n.navCash != null ? n.navCash : null), borderColor: '#3B6D11', backgroundColor: 'transparent', tension: 0.2, fill: false, borderDash: [4,3], pointRadius: 0, borderWidth: 1.5 },
+        { label: 'Capital invertido', data: nav.map(n => n.invested), borderColor: '#A09F9B', backgroundColor: 'transparent', tension: 0.2, fill: false, borderDash: [2,4], pointRadius: 0, borderWidth: 1 }
       ]},
       options: { responsive:true, maintainAspectRatio:false, interaction: { mode:'index', intersect:false },
         plugins: { legend: { position:'top', labels:{ boxWidth:10, font:{size:11} } }, tooltip: { callbacks:{ label: ctx => ctx.dataset.label + ': ' + fmt(ctx.raw) } } },
@@ -1174,19 +1188,31 @@ function renderInversiones() {
   }
 
   destroyChart('chartInvHist');
-  const histInv = S.historial.filter(h=>Object.keys(h.inversiones||{}).length>0).sort((a,b)=>a.mes.localeCompare(b.mes));
-  if (histInv.length > 1) {
-    // Cumulative deposits line
-    let cumDep = 0;
-    const cumDeps = histInv.map(h=>{ cumDep += (h.aportacion||0); return cumDep; });
+  // Use real historical NAV if available, otherwise fall back to cost-based historial
+  const navData = (S.historicalNav || []).filter(n => n.navPortfolio > 0).sort((a,b)=>a.mes.localeCompare(b.mes));
+  if (navData.length > 1) {
     charts['chartInvHist'] = new Chart(document.getElementById('chartInvHist'), {
       type:'line',
-      data:{labels:histInv.map(h=>fmtMes(h.mes)), datasets:[
-        {label:'Aportado acumulado',data:cumDeps,borderColor:'rgba(90,158,26,0.7)',backgroundColor:'rgba(90,158,26,0.07)',tension:0.3,fill:true,pointRadius:3,borderDash:[4,3]},
-        {label:'Portfolio',data:histInv.map(h=>Object.values(h.inversiones||{}).reduce((a,b)=>a+b,0)),borderColor:'#0C3F7A',backgroundColor:'rgba(12,63,122,0.07)',tension:0.3,fill:true,pointRadius:3}
+      data:{labels:navData.map(n=>fmtMes(n.mes)), datasets:[
+        {label:'Capital invertido',data:navData.map(n=>n.invested),borderColor:'rgba(90,158,26,0.7)',backgroundColor:'rgba(90,158,26,0.07)',tension:0.2,fill:true,pointRadius:0,borderDash:[4,3],borderWidth:1.5},
+        {label:'Valor mercado (acciones)',data:navData.map(n=>n.navPortfolio),borderColor:'#0C3F7A',backgroundColor:'rgba(12,63,122,0.08)',tension:0.3,fill:true,pointRadius:2,borderWidth:2}
       ]},
-      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',labels:{boxWidth:10,font:{size:11}}},tooltip:{callbacks:{label:ctx=>ctx.dataset.label+': '+fmt(ctx.raw)}}},scales:{x:{ticks:{font:{size:11}}},y:{ticks:{callback:v=>fmt(v),font:{size:11}}}}}
+      options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{position:'top',labels:{boxWidth:10,font:{size:11}}},tooltip:{callbacks:{label:ctx=>ctx.dataset.label+': '+fmt(ctx.raw)}}},scales:{x:{ticks:{font:{size:11},maxTicksLimit:12}},y:{ticks:{callback:v=>fmt(v),font:{size:11}}}}}
     });
+  } else {
+    const histInv = S.historial.filter(h=>Object.keys(h.inversiones||{}).length>0).sort((a,b)=>a.mes.localeCompare(b.mes));
+    if (histInv.length > 1) {
+      let cumDep = 0;
+      const cumDeps = histInv.map(h=>{ cumDep += (h.aportacion||0); return cumDep; });
+      charts['chartInvHist'] = new Chart(document.getElementById('chartInvHist'), {
+        type:'line',
+        data:{labels:histInv.map(h=>fmtMes(h.mes)), datasets:[
+          {label:'Aportado acumulado',data:cumDeps,borderColor:'rgba(90,158,26,0.7)',backgroundColor:'rgba(90,158,26,0.07)',tension:0.2,fill:true,pointRadius:0,borderDash:[4,3]},
+          {label:'Portfolio (coste)',data:histInv.map(h=>Object.values(h.inversiones||{}).reduce((a,b)=>a+b,0)),borderColor:'#0C3F7A',backgroundColor:'rgba(12,63,122,0.07)',tension:0.3,fill:true,pointRadius:3}
+        ]},
+        options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',labels:{boxWidth:10,font:{size:11}}},tooltip:{callbacks:{label:ctx=>ctx.dataset.label+': '+fmt(ctx.raw)}}},scales:{x:{ticks:{font:{size:11}}},y:{ticks:{callback:v=>fmt(v),font:{size:11}}}}}
+      });
+    }
   }
 
   // Table — shows symbol, qty, live value, cost, G/P, dividends
