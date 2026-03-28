@@ -1034,7 +1034,7 @@ function renderHistorial() {
       ]},
       options: { responsive:true, maintainAspectRatio:false, interaction: { mode:'index', intersect:false },
         plugins: { legend: { position:'top', labels:{ boxWidth:10, font:{size:11} } }, tooltip: { callbacks:{ label: ctx => ctx.dataset.label + ': ' + fmt(ctx.raw) } } },
-        scales: { x:{ ticks:{ font:{size:11}, maxTicksLimit:14 } }, y:{ ticks:{ callback: v => fmt(v), font:{size:11} } } } }
+        scales: { x:{ ticks:{ font:{size:11}, maxTicksLimit:14 } }, y:{ min:0, ticks:{ callback: v => fmt(v), font:{size:11} } } } }
     });
   } else {
     // Fallback: use manual historial with cost values
@@ -1114,7 +1114,7 @@ function renderHistorial() {
         <td class="mono" style="color:var(--text3);">${fmt(n.invested)}</td>
         <td class="mono ${gpE>=0?'pos':'neg'}">${fmt(gpE)}</td>
         <td class="mono"><span class="badge ${gpP>=0?'badge-green':'badge-red'}">${fmtPct(gpP)}</span></td>
-        <td class="mono">${n.invested > (prev?.invested||0) ? '+'+fmt(n.invested-(prev?.invested||0)) : '—'}</td>
+        <td class="mono pos">${n.invested > (prev?.invested||0) ? '+'+fmt(n.invested-(prev?.invested||0)) : '—'}</td>
         <td><span class="badge ${n.source==='yahoo'?'badge-blue':'badge-amber'}">${n.source}</span></td>
         <td><button class="btn btn-sm btn-danger" onclick="deleteNav('${n.mes}')">✕</button></td>
       </tr>`;
@@ -1194,10 +1194,10 @@ function renderInversiones() {
     charts['chartInvHist'] = new Chart(document.getElementById('chartInvHist'), {
       type:'line',
       data:{labels:navData.map(n=>fmtMes(n.mes)), datasets:[
-        {label:'Capital invertido',data:navData.map(n=>n.invested),borderColor:'rgba(90,158,26,0.7)',backgroundColor:'rgba(90,158,26,0.07)',tension:0.2,fill:true,pointRadius:0,borderDash:[4,3],borderWidth:1.5},
-        {label:'Valor mercado (acciones)',data:navData.map(n=>n.navPortfolio),borderColor:'#0C3F7A',backgroundColor:'rgba(12,63,122,0.08)',tension:0.3,fill:true,pointRadius:2,borderWidth:2}
+        {label:'Valor mercado (acciones)',data:navData.map(n=>n.navPortfolio),borderColor:'#0C3F7A',backgroundColor:'rgba(12,63,122,0.08)',tension:0.3,fill:true,pointRadius:2,borderWidth:2},
+        {label:'Capital invertido',data:navData.map(n=>n.invested),borderColor:'rgba(90,158,26,0.85)',backgroundColor:'transparent',tension:0.2,fill:false,pointRadius:0,borderDash:[5,4],borderWidth:1.5}
       ]},
-      options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{position:'top',labels:{boxWidth:10,font:{size:11}}},tooltip:{callbacks:{label:ctx=>ctx.dataset.label+': '+fmt(ctx.raw)}}},scales:{x:{ticks:{font:{size:11},maxTicksLimit:12}},y:{ticks:{callback:v=>fmt(v),font:{size:11}}}}}
+      options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{position:'top',labels:{boxWidth:10,font:{size:11}}},tooltip:{callbacks:{label:ctx=>ctx.dataset.label+': '+fmt(ctx.raw)}}},scales:{x:{ticks:{font:{size:11},maxTicksLimit:12}},y:{min:0,ticks:{callback:v=>fmt(v),font:{size:11}}}}}
     });
   } else {
     const histInv = S.historial.filter(h=>Object.keys(h.inversiones||{}).length>0).sort((a,b)=>a.mes.localeCompare(b.mes));
@@ -1210,7 +1210,7 @@ function renderInversiones() {
           {label:'Aportado acumulado',data:cumDeps,borderColor:'rgba(90,158,26,0.7)',backgroundColor:'rgba(90,158,26,0.07)',tension:0.2,fill:true,pointRadius:0,borderDash:[4,3]},
           {label:'Portfolio (coste)',data:histInv.map(h=>Object.values(h.inversiones||{}).reduce((a,b)=>a+b,0)),borderColor:'#0C3F7A',backgroundColor:'rgba(12,63,122,0.07)',tension:0.3,fill:true,pointRadius:3}
         ]},
-        options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',labels:{boxWidth:10,font:{size:11}}},tooltip:{callbacks:{label:ctx=>ctx.dataset.label+': '+fmt(ctx.raw)}}},scales:{x:{ticks:{font:{size:11}}},y:{ticks:{callback:v=>fmt(v),font:{size:11}}}}}
+        options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',labels:{boxWidth:10,font:{size:11}}},tooltip:{callbacks:{label:ctx=>ctx.dataset.label+': '+fmt(ctx.raw)}}},scales:{x:{ticks:{font:{size:11}}},y:{min:0,ticks:{callback:v=>fmt(v),font:{size:11}}}}}
       });
     }
   }
