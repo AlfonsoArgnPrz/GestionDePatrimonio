@@ -34,7 +34,6 @@
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: var(--sans); background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.5; min-height: 100vh; }
 
-  /* LAYOUT */
   .app { display: flex; min-height: 100vh; }
   .sidebar { width: 220px; min-height: 100vh; background: var(--surface); border-right: 1px solid var(--border); padding: 28px 0; position: fixed; top: 0; left: 0; display: flex; flex-direction: column; z-index: 100; }
   .main { margin-left: 220px; padding: 32px 36px; flex: 1; max-width: 1100px; }
@@ -50,16 +49,13 @@
   .sidebar-bottom { margin-top: auto; padding: 16px 24px 0; border-top: 1px solid var(--border); }
   .last-updated { font-size: 11px; color: var(--text3); font-family: var(--mono); }
 
-  /* SCREENS */
   .screen { display: none; }
   .screen.active { display: block; }
 
-  /* PAGE HEADER */
   .page-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 28px; }
   .page-title { font-size: 24px; font-weight: 300; letter-spacing: -0.03em; color: var(--text); }
   .page-subtitle { font-size: 13px; color: var(--text3); margin-top: 2px; font-family: var(--mono); }
 
-  /* BUTTONS */
   .btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: var(--radius-sm); font-size: 13px; cursor: pointer; transition: all 0.15s; font-family: var(--sans); border: 1px solid var(--border-strong); background: var(--surface); color: var(--text); }
   .btn:hover { background: var(--surface2); }
   .btn-primary { background: var(--text); color: var(--bg); border-color: var(--text); }
@@ -69,11 +65,9 @@
   .btn-danger:hover { background: var(--red-bg); }
   .btn-group { display: flex; gap: 8px; align-items: center; }
 
-  /* CARDS */
   .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px 22px; }
   .card-sm { padding: 14px 16px; }
 
-  /* METRIC CARDS */
   .metrics-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-bottom: 24px; }
   .metric { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 18px; }
   .metric-label { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; font-family: var(--mono); margin-bottom: 6px; }
@@ -82,7 +76,6 @@
   .metric-delta.pos { color: var(--green); }
   .metric-delta.neg { color: var(--red); }
 
-  /* TABLES */
   table { width: 100%; border-collapse: collapse; font-size: 13px; }
   th { text-align: left; font-size: 10px; font-weight: 500; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; padding: 0 12px 10px; font-family: var(--mono); border-bottom: 1px solid var(--border); }
   th:last-child, td:last-child { text-align: right; }
@@ -98,7 +91,6 @@
   .badge-amber { background: var(--amber-bg); color: var(--amber); }
   .badge-blue { background: var(--blue-bg); color: var(--blue); }
 
-  /* FORMS */
   .form-group { margin-bottom: 14px; }
   .form-label { font-size: 12px; color: var(--text2); display: block; margin-bottom: 5px; font-weight: 400; }
   input[type=text], input[type=number], input[type=month], input[type=date], select {
@@ -108,17 +100,12 @@
   }
   input:focus, select:focus { border-color: var(--text); }
   .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
-  .grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 14px; }
 
-  /* PROGRESS */
   .progress { height: 5px; background: var(--surface2); border-radius: 3px; overflow: hidden; }
   .progress-fill { height: 100%; border-radius: 3px; transition: width 0.4s ease; }
 
-  /* CHART */
   .chart-wrap { position: relative; }
 
-  /* MODAL */
   .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.35); z-index: 200; align-items: center; justify-content: center; }
   .modal-overlay.open { display: flex; }
   .modal { background: var(--surface); border-radius: var(--radius); width: 520px; max-width: 95vw; max-height: 85vh; overflow-y: auto; border: 1px solid var(--border); }
@@ -128,43 +115,24 @@
   .modal-footer { padding: 16px 24px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 8px; }
   .close-btn { background: none; border: none; cursor: pointer; color: var(--text3); font-size: 20px; line-height: 1; padding: 0; }
 
-  /* UPLOAD AREA */
-  .upload-area { border: 1.5px dashed var(--border-strong); border-radius: var(--radius); padding: 32px; text-align: center; cursor: pointer; transition: all 0.15s; }
-  .upload-area:hover, .upload-area.drag { border-color: var(--text); background: var(--surface2); }
-  .upload-icon { font-size: 28px; margin-bottom: 8px; }
-  .upload-title { font-size: 14px; font-weight: 500; margin-bottom: 4px; }
-  .upload-sub { font-size: 12px; color: var(--text3); }
-
-  /* ONBOARDING */
-  .onboarding { max-width: 480px; margin: 60px auto; }
-  .onboarding-logo { font-family: var(--mono); font-size: 20px; font-weight: 500; letter-spacing: -0.03em; margin-bottom: 40px; }
-  .steps { display: flex; gap: 8px; margin-bottom: 32px; }
-  .step-dot { height: 3px; border-radius: 2px; background: var(--border-strong); flex: 1; transition: background 0.3s; }
-  .step-dot.done, .step-dot.active { background: var(--text); }
-
-  /* SECTION HEADER */
   .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
   .section-title { font-size: 11px; font-weight: 500; color: var(--text3); text-transform: uppercase; letter-spacing: 0.07em; font-family: var(--mono); }
 
-  /* INLINE EDIT ROW */
   .edit-row { display: grid; gap: 8px; align-items: center; margin-bottom: 8px; }
   .edit-row input { margin-bottom: 0; }
 
-  /* TOAST */
   .toast { position: fixed; bottom: 28px; right: 28px; background: var(--text); color: var(--bg); padding: 10px 18px; border-radius: var(--radius-sm); font-size: 13px; font-family: var(--mono); z-index: 999; opacity: 0; transform: translateY(8px); transition: all 0.25s; pointer-events: none; }
   .toast.show { opacity: 1; transform: translateY(0); }
 
-  /* EMPTY STATE */
   .empty { text-align: center; padding: 40px 20px; color: var(--text3); font-size: 13px; }
   .empty-icon { font-size: 32px; margin-bottom: 10px; }
 
-  /* DIVIDER */
   .divider { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
 
-  /* CSV MAPPING */
-  .csv-preview { font-family: var(--mono); font-size: 11px; background: var(--surface2); border-radius: var(--radius-sm); padding: 10px 12px; overflow-x: auto; white-space: pre; color: var(--text2); margin: 10px 0; max-height: 120px; overflow-y: auto; }
-  .mapping-row { display: grid; grid-template-columns: 1fr 16px 1fr; gap: 8px; align-items: center; margin-bottom: 8px; font-size: 13px; }
-  .mapping-arrow { color: var(--text3); text-align: center; }
+  /* Price refresh indicator */
+  .price-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--text3); margin-right: 5px; vertical-align: middle; }
+  .price-dot.live { background: var(--green); animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
 
   @media (max-width: 768px) {
     .sidebar { width: 100%; min-height: auto; position: relative; }
@@ -182,86 +150,12 @@
   <a id="iframe-dl" style="color:#FDF3E3; margin-left:12px; text-decoration:underline; cursor:pointer;">Descargar archivo</a>
 </div>
 
-<!-- ONBOARDING -->
-<div id="onboarding" style="display:none; padding: 40px 20px;">
-  <div class="onboarding">
-    <div class="onboarding-logo">patrimonio/</div>
-    <div class="steps" id="ob-steps">
-      <div class="step-dot active"></div>
-      <div class="step-dot"></div>
-      <div class="step-dot"></div>
-      <div class="step-dot"></div>
-    </div>
-    <div id="ob-step-1">
-      <h2 style="font-size:22px; font-weight:300; letter-spacing:-0.03em; margin-bottom:6px;">Hola, ¿cómo te llamas?</h2>
-      <p style="color:var(--text3); font-size:13px; margin-bottom:24px;">Configura tu gestor de patrimonio personal.</p>
-      <div class="form-group"><label class="form-label">Tu nombre</label><input type="text" id="ob-nombre" placeholder="Alfonso"></div>
-      <div class="form-group"><label class="form-label">Moneda</label>
-        <select id="ob-moneda"><option value="EUR">€ Euro</option><option value="USD">$ Dólar</option><option value="GBP">£ Libra</option></select>
-      </div>
-      <button class="btn btn-primary" style="width:100%; margin-top:8px;" onclick="obStep(2)">Continuar →</button>
-    </div>
-    <div id="ob-step-2" style="display:none;">
-      <h2 style="font-size:22px; font-weight:300; letter-spacing:-0.03em; margin-bottom:6px;">Cuentas y ahorro</h2>
-      <p style="color:var(--text3); font-size:13px; margin-bottom:20px;">Añade tus cuentas corrientes y de ahorro.</p>
-      <div id="ob-cuentas-list"></div>
-      <div class="edit-row" style="grid-template-columns:2fr 1fr auto;">
-        <input type="text" id="ob-c-nom" placeholder="ING, Sabadell…">
-        <input type="number" id="ob-c-val" placeholder="Saldo €">
-        <button class="btn btn-sm" onclick="obAddCuenta()">+</button>
-      </div>
-      <div style="display:flex;gap:8px;margin-top:20px;">
-        <button class="btn" style="flex:1;" onclick="obStep(1)">← Atrás</button>
-        <button class="btn btn-primary" style="flex:2;" onclick="obStep(3)">Continuar →</button>
-      </div>
-    </div>
-    <div id="ob-step-3" style="display:none;">
-      <h2 style="font-size:22px; font-weight:300; letter-spacing:-0.03em; margin-bottom:6px;">Inversiones</h2>
-      <p style="color:var(--text3); font-size:13px; margin-bottom:20px;">Añade posiciones manualmente ahora. Luego podrás importar tu histórico CSV desde el broker.</p>
-      <div id="ob-inv-list"></div>
-      <div class="edit-row" style="grid-template-columns:2fr 1fr 1fr auto;">
-        <input type="text" id="ob-i-nom" placeholder="Vanguard MSCI World">
-        <input type="number" id="ob-i-val" placeholder="Valor €">
-        <input type="number" id="ob-i-cost" placeholder="Coste €">
-        <button class="btn btn-sm" onclick="obAddInv()">+</button>
-      </div>
-      <div style="display:flex;gap:8px;margin-top:20px;">
-        <button class="btn" style="flex:1;" onclick="obStep(2)">← Atrás</button>
-        <button class="btn btn-primary" style="flex:2;" onclick="obStep(4)">Continuar →</button>
-      </div>
-    </div>
-    <div id="ob-step-4" style="display:none;">
-      <h2 style="font-size:22px; font-weight:300; letter-spacing:-0.03em; margin-bottom:6px;">Metales y metas</h2>
-      <p style="color:var(--text3); font-size:13px; margin-bottom:20px;">Opcional. Añade metales preciosos y tus objetivos de ahorro.</p>
-      <p style="font-size:12px; color:var(--text3); font-family:var(--mono); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:8px;">Metales preciosos</p>
-      <div id="ob-met-list"></div>
-      <div class="edit-row" style="grid-template-columns:2fr 1fr auto; margin-bottom:16px;">
-        <input type="text" id="ob-m-nom" placeholder="Oro (2 oz)">
-        <input type="number" id="ob-m-val" placeholder="Valor €">
-        <button class="btn btn-sm" onclick="obAddMetal()">+</button>
-      </div>
-      <p style="font-size:12px; color:var(--text3); font-family:var(--mono); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:8px;">Metas de ahorro</p>
-      <div id="ob-metas-list"></div>
-      <div class="edit-row" style="grid-template-columns:2fr 1fr 1fr auto;">
-        <input type="text" id="ob-mt-nom" placeholder="Fondo emergencia">
-        <input type="number" id="ob-mt-obj" placeholder="Objetivo €">
-        <input type="number" id="ob-mt-act" placeholder="Actual €">
-        <button class="btn btn-sm" onclick="obAddMeta()">+</button>
-      </div>
-      <div style="display:flex;gap:8px;margin-top:20px;">
-        <button class="btn" style="flex:1;" onclick="obStep(3)">← Atrás</button>
-        <button class="btn btn-primary" style="flex:2;" onclick="obFinish()">Empezar →</button>
-      </div>
-    </div>
-  </div>
-</div>
-
 <!-- MAIN APP -->
-<div class="app" id="app" style="display:none;">
+<div class="app" id="app">
   <aside class="sidebar">
     <div class="logo">
       <div class="logo-text">patrimonio/</div>
-      <div class="logo-sub" id="sidebar-nombre">—</div>
+      <div class="logo-sub" id="sidebar-nombre">Alfonso</div>
     </div>
     <div class="nav-section">Visión general</div>
     <div class="nav-item active" onclick="showPage('dashboard')">
@@ -297,10 +191,12 @@
     <div class="sidebar-bottom">
       <div class="last-updated" id="last-updated-sidebar">—</div>
       <div style="display:flex;gap:8px;margin-top:10px;">
-        <button class="btn btn-sm" onclick="exportData()" title="Exportar datos" style="flex:1;justify-content:center;">↓ Export</button>
-        <button class="btn btn-sm" onclick="triggerImport()" title="Importar datos" style="flex:1;justify-content:center;">↑ Import</button>
+        <button class="btn btn-sm" onclick="exportData()" style="flex:1;justify-content:center;">↓ Export</button>
+        <button class="btn btn-sm" onclick="triggerImport()" style="flex:1;justify-content:center;">↑ Import</button>
       </div>
+      <button class="btn btn-sm" onclick="document.getElementById('csv-ibkr-file').click()" style="width:100%;margin-top:6px;justify-content:center;">↑ CSV IBKR</button>
       <input type="file" id="import-file" accept=".json" style="display:none;" onchange="importData(event)">
+      <input type="file" id="csv-ibkr-file" accept=".csv" style="display:none;" onchange="importIBKRcsv(this.files[0])">
     </div>
   </aside>
 
@@ -310,7 +206,7 @@
     <div id="page-dashboard" class="screen active">
       <div class="page-header">
         <div>
-          <div class="page-title" id="dash-title">Patrimonio total</div>
+          <div class="page-title" id="dash-title">Patrimonio de Alfonso</div>
           <div class="page-subtitle" id="dash-subtitle">—</div>
         </div>
         <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;">
@@ -333,7 +229,7 @@
         </div>
       </div>
       <div class="card">
-        <div class="section-header"><span class="section-title">Últimas posiciones</span></div>
+        <div class="section-header"><span class="section-title">Mayores posiciones</span></div>
         <table><thead><tr><th>Activo</th><th>Tipo</th><th>Valor</th><th>Rentabilidad</th></tr></thead>
         <tbody id="dash-recent-rows"></tbody></table>
       </div>
@@ -342,19 +238,45 @@
     <!-- HISTORIAL -->
     <div id="page-historial" class="screen">
       <div class="page-header">
-        <div><div class="page-title">Evolución patrimonial</div><div class="page-subtitle">Histórico mensual completo</div></div>
+        <div><div class="page-title">Evolución patrimonial</div><div class="page-subtitle" id="hist-subtitle">Precios históricos reales · Yahoo Finance</div></div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;">
+          <button class="btn btn-primary" id="btn-rebuild" onclick="rebuildHistoricalNav()">↻ Reconstruir con precios reales</button>
+          <span id="rebuild-status" style="font-size:11px;color:var(--text3);font-family:var(--mono);"></span>
+        </div>
       </div>
+
+      <!-- KPIs row -->
+      <div class="metrics-grid" id="hist-kpis" style="margin-bottom:20px;"></div>
+
+      <!-- Main chart: NAV vs invested -->
       <div class="card" style="margin-bottom:16px;">
-        <div class="section-header"><span class="section-title">Patrimonio total</span></div>
-        <div class="chart-wrap" style="height:260px;"><canvas id="chartHist"></canvas></div>
+        <div class="section-header">
+          <span class="section-title">Valor de mercado vs capital invertido</span>
+          <div style="display:flex;gap:6px;">
+            <button class="btn btn-sm" id="hrange-all" onclick="setHistRange('all')" style="border-color:var(--text);background:var(--text);color:var(--bg);">Todo</button>
+            <button class="btn btn-sm" id="hrange-1y"  onclick="setHistRange('1y')">1A</button>
+            <button class="btn btn-sm" id="hrange-2y"  onclick="setHistRange('2y')">2A</button>
+          </div>
+        </div>
+        <div class="chart-wrap" style="height:280px;"><canvas id="chartHist"></canvas></div>
       </div>
-      <div class="card" style="margin-bottom:16px;">
-        <div class="section-header"><span class="section-title">Composición por categoría</span></div>
-        <div class="chart-wrap" style="height:220px;"><canvas id="chartStack"></canvas></div>
+
+      <!-- Secondary charts row -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
+        <div class="card">
+          <div class="section-header"><span class="section-title">Rentabilidad mensual (%)</span></div>
+          <div class="chart-wrap" style="height:180px;"><canvas id="chartHistMonthly"></canvas></div>
+        </div>
+        <div class="card">
+          <div class="section-header"><span class="section-title">Composición por activo (fin de período)</span></div>
+          <div class="chart-wrap" style="height:180px;"><canvas id="chartStack"></canvas></div>
+        </div>
       </div>
+
+      <!-- Table -->
       <div class="card">
-        <div class="section-header"><span class="section-title">Registros mensuales</span></div>
-        <table><thead><tr><th>Mes</th><th>Ahorro</th><th>Inversiones</th><th>Metales</th><th>Total</th><th>Aportación</th><th></th></tr></thead>
+        <div class="section-header"><span class="section-title">Detalle mensual</span></div>
+        <table><thead><tr><th>Mes</th><th>Valor mercado</th><th>Capital inv.</th><th>G/P €</th><th>G/P %</th><th>Aportación</th><th>Fuente</th><th></th></tr></thead>
         <tbody id="hist-rows"></tbody></table>
       </div>
     </div>
@@ -362,9 +284,8 @@
     <!-- INVERSIONES -->
     <div id="page-inversiones" class="screen">
       <div class="page-header">
-        <div><div class="page-title">Inversiones</div><div class="page-subtitle">Fondos · acciones · ETFs</div></div>
+        <div><div class="page-title">Inversiones IBKR</div><div class="page-subtitle">19 posiciones · coste real del CSV · precios de mercado en vivo</div></div>
         <div class="btn-group">
-          <button class="btn" onclick="openCsvModal()">↑ Importar CSV</button>
           <button class="btn btn-primary" onclick="openAddInvModal()">+ Añadir</button>
         </div>
       </div>
@@ -375,16 +296,16 @@
           <div class="chart-wrap" style="height:200px;"><canvas id="chartInvPie"></canvas></div>
         </div>
         <div class="card">
-          <div class="section-header"><span class="section-title">Rentabilidad por posición</span></div>
+          <div class="section-header"><span class="section-title">Rentabilidad por posición (%)</span></div>
           <div class="chart-wrap" style="height:200px;"><canvas id="chartInvBar"></canvas></div>
         </div>
       </div>
       <div class="card" style="margin-bottom:16px;">
-        <div class="section-header"><span class="section-title">Evolución del portfolio</span></div>
+        <div class="section-header"><span class="section-title">Evolución de aportaciones</span></div>
         <div class="chart-wrap" style="height:200px;"><canvas id="chartInvHist"></canvas></div>
       </div>
       <div class="card">
-        <table><thead><tr><th>Nombre</th><th>Tipo</th><th>Valor actual</th><th>Coste</th><th>G/P €</th><th>G/P %</th><th>Dividendos</th><th></th></tr></thead>
+        <table><thead><tr><th>Nombre</th><th>Símbolo</th><th>Acciones</th><th>Valor mercado</th><th>Coste IBKR</th><th>G/P €</th><th>G/P %</th><th>Dividendos</th><th></th></tr></thead>
         <tbody id="inv-rows"></tbody></table>
       </div>
     </div>
@@ -447,7 +368,7 @@
         <div id="upd-metas"></div>
         <hr class="divider">
         <div class="form-group">
-          <label class="form-label">Aportación neta del mes (€) — positivo si has aportado, negativo si has retirado</label>
+          <label class="form-label">Aportación neta del mes (€)</label>
           <input type="number" id="upd-aportacion" placeholder="500">
         </div>
         <button class="btn btn-primary" style="width:100%;" onclick="saveUpdate()">Guardar registro →</button>
@@ -460,7 +381,7 @@
 <!-- MODALS -->
 <div class="modal-overlay" id="modal-add-inv">
   <div class="modal">
-    <div class="modal-header"><span class="modal-title">Añadir inversión</span><button class="close-btn" onclick="closeModal('modal-add-inv')">×</button></div>
+    <div class="modal-header"><span class="modal-title" id="modal-inv-title">Añadir inversión</span><button class="close-btn" onclick="closeModal('modal-add-inv')">×</button></div>
     <div class="modal-body">
       <div class="grid-2">
         <div class="form-group"><label class="form-label">Nombre</label><input type="text" id="ai-nom" placeholder="Vanguard MSCI World"></div>
@@ -476,7 +397,10 @@
         <div class="form-group"><label class="form-label">Dividendos recibidos €</label><input type="number" id="ai-div" placeholder="0"></div>
         <div class="form-group"><label class="form-label">Fecha de compra</label><input type="date" id="ai-fecha"></div>
       </div>
-      <div class="form-group"><label class="form-label">Notas (ISIN, broker…)</label><input type="text" id="ai-notas" placeholder="IE00B3RBWM25 · MyInvestor"></div>
+      <div class="grid-2">
+        <div class="form-group"><label class="form-label">Símbolo IBKR</label><input type="text" id="ai-notas" placeholder="META, MSFT…"></div>
+        <div class="form-group"><label class="form-label">Número de acciones</label><input type="number" id="ai-qty" placeholder="10"></div>
+      </div>
     </div>
     <div class="modal-footer">
       <button class="btn" onclick="closeModal('modal-add-inv')">Cancelar</button>
@@ -548,148 +472,129 @@
   </div>
 </div>
 
-<!-- CSV IMPORT MODAL REPLACED -->
-<div class="modal-overlay" id="modal-csv">
-  <div class="modal" style="width:600px;">
-    <div class="modal-header"><span class="modal-title">Importar historial IBKR</span><button class="close-btn" onclick="closeModal('modal-csv')">×</button></div>
-    <div class="modal-body">
-      <div id="csv-step-upload">
-        <div class="upload-area" id="csv-drop" onclick="document.getElementById('csv-file-input').click()" ondragover="csvDrag(event)" ondrop="csvDrop(event)">
-          <div class="upload-icon">📂</div>
-          <div class="upload-title">Arrastra el CSV de Interactive Brokers</div>
-          <div class="upload-sub">Exporta desde IBKR → Informes → Extractos → Transaction History (CSV). El archivo calcula posiciones, coste medio y dividendos automáticamente.</div>
-        </div>
-        <input type="file" id="csv-file-input" accept=".csv" style="display:none;" onchange="csvLoad(event)">
-        <div style="margin-top:16px; background:var(--surface2); border-radius:var(--radius-sm); padding:12px 14px;">
-          <p style="font-size:12px; font-weight:500; margin-bottom:6px;">Calcula automáticamente</p>
-          <p style="font-size:12px; color:var(--text3); line-height:1.7;">
-            Posiciones actuales y cantidad de acciones &nbsp;·&nbsp; Coste medio ponderado por compra &nbsp;·&nbsp; Dividendos netos (descontando retenciones) &nbsp;·&nbsp; Depósitos como aportaciones en el historial
-          </p>
-        </div>
-      </div>
-      <div id="csv-step-preview" style="display:none;">
-        <p style="font-size:14px; font-weight:500; margin-bottom:3px;" id="csv-preview-title"></p>
-        <p style="font-size:12px; color:var(--text3); margin-bottom:16px;" id="csv-preview-sub"></p>
-        <div style="max-height:280px; overflow-y:auto;" id="csv-positions-preview"></div>
-        <div style="margin-top:12px; padding:10px 12px; background:var(--amber-bg); border-radius:var(--radius-sm);">
-          <p style="font-size:12px; color:var(--amber);">El historial de transacciones no incluye precios de mercado actuales. Introduce el valor actual de cada posición para calcular la rentabilidad real, o déjalo en blanco para usar el coste como valor provisional.</p>
-        </div>
-      </div>
-      <div id="csv-step-done" style="display:none; text-align:center; padding:24px 0;">
-        <div style="font-size:36px; margin-bottom:12px;">✓</div>
-        <p style="font-size:15px; font-weight:500; margin-bottom:4px;" id="csv-done-msg"></p>
-        <p style="font-size:13px; color:var(--text3);" id="csv-done-sub"></p>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn" onclick="closeModal('modal-csv'); resetCsvModal();">Cancelar</button>
-      <button class="btn btn-primary" id="csv-next-btn" style="display:none;" onclick="csvImport()">Importar →</button>
-    </div>
-  </div>
-</div>
-
 <script>
 // ─── STATE ───────────────────────────────────────────────────────────────────
-const STORAGE_KEY = 'patrimonio_v2';
-let S = {
-  nombre: '',
-  moneda: 'EUR',
-  cuentas: [],      // {id, nombre, banco, tipo, valor}
-  inversiones: [],  // {id, nombre, tipo, valor, coste, dividendos, fecha, notas}
-  metales: [],      // {id, nombre, tipo, qty, precio}
-  metas: [],        // {id, nombre, objetivo, actual, fecha, notas}
-  historial: []     // {mes, cuentas:{id:val}, inversiones:{id:val}, metales:{id:val}, metas:{id:val}, aportacion}
-};
-let csvRawRows = [], csvHeaders = [];
-let editInvId = null;
-let charts = {};
+const STORAGE_KEY = 'patrimonio_v3';
 
+// ── IBKR SEED — datos reales del CSV U10339562 (oct 2022 – mar 2026) ─────────
+// Coste = coste medio real calculado del historial de transacciones IBKR
+// Dividendos = dividendos netos recibidos (descontadas retenciones fiscales)
+// Qty = acciones actuales en cartera
+// Valor = coste inicial; se sobrescribe con precio de mercado al cargar
+const IBKR_SEED = {"nombre":"Alfonso","moneda":"EUR","cuentas":[{"id":"cash01","nombre":"Efectivo IBKR","banco":"Interactive Brokers","tipo":"Ahorro","valor":883}],"inversiones":[{"id":"b83aac23","nombre":"Pax Global Technology Ltd","tipo":"Acción","valor":747.28,"coste":747.28,"dividendos":135.06,"fecha":"2023-08-02","notas":"327","qty":1000},{"id":"49c9adb1","nombre":"Playmates Holdings Ltd","tipo":"Acción","valor":329.84,"coste":329.84,"dividendos":69.42,"fecha":"2024-04-02","notas":"869","qty":4000},{"id":"8cdfee6d","nombre":"Airtel Africa PLC","tipo":"Acción","valor":424.51,"coste":424.51,"dividendos":34.51,"fecha":"2024-05-15","notas":"AAF","qty":300},{"id":"8d2bbbd9","nombre":"Alibaba Group ADR","tipo":"Acción","valor":743.85,"coste":743.85,"dividendos":26.44,"fecha":"2024-01-05","notas":"BABA","qty":11},{"id":"aeb12a8e","nombre":"Peabody Energy","tipo":"Acción","valor":225.84,"coste":225.84,"dividendos":5.39,"fecha":"2023-02-21","notas":"BTU","qty":10},{"id":"753b0c63","nombre":"Golar LNG Ltd","tipo":"Acción","valor":569.91,"coste":569.91,"dividendos":41.26,"fecha":"2023-01-25","notas":"GLNG","qty":22},{"id":"2bbf64a0","nombre":"Cool Co Ltd","tipo":"Acción","valor":38.04,"coste":38.04,"dividendos":8.34,"fecha":"2023-02-21","notas":"HQ3","qty":3},{"id":"f07e4282","nombre":"Halyk Savings Bank GDR","tipo":"Acción","valor":561.23,"coste":561.23,"dividendos":182.7,"fecha":"2024-03-08","notas":"HSBK","qty":35},{"id":"dce893e5","nombre":"India Capital Growth Fund","tipo":"Acción","valor":186.19,"coste":186.19,"dividendos":0.0,"fecha":"2024-08-05","notas":"IGC","qty":90},{"id":"91e1f331","nombre":"India Capital Growth Fund (2º lote)","tipo":"Acción","valor":510.52,"coste":510.52,"dividendos":0.0,"fecha":"2025-05-28","notas":"IGCl","qty":250},{"id":"bacd622b","nombre":"Kistos Holdings PLC","tipo":"Acción","valor":222.91,"coste":222.91,"dividendos":0.0,"fecha":"2023-03-14","notas":"KIST","qty":65},{"id":"b7e74978","nombre":"JSC Kaspi.kz ADR","tipo":"Acción","valor":516.83,"coste":516.83,"dividendos":20.3,"fecha":"2024-03-05","notas":"KSPI","qty":6},{"id":"e59f1c4f","nombre":"Meta Platforms","tipo":"Acción","valor":1021.66,"coste":1021.66,"dividendos":1.88,"fecha":"2025-04-03","notas":"META","qty":2},{"id":"b004b3ec","nombre":"Microsoft Corp","tipo":"Acción","valor":329.09,"coste":329.09,"dividendos":2.1,"fecha":"2025-04-07","notas":"MSFT","qty":1},{"id":"1d68d669","nombre":"Nagarro SE","tipo":"Acción","valor":936.45,"coste":936.45,"dividendos":12.0,"fecha":"2022-10-20","notas":"NA9","qty":12},{"id":"caf162e9","nombre":"Neonode Inc","tipo":"Acción","valor":92.0,"coste":92.0,"dividendos":0.0,"fecha":"2023-01-27","notas":"NEON","qty":10},{"id":"ba906cb5","nombre":"Novo Nordisk A/S-B","tipo":"Acción","valor":886.48,"coste":886.48,"dividendos":0.0,"fecha":"2025-12-30","notas":"NOVO B","qty":20},{"id":"8decf9f9","nombre":"Teleperformance","tipo":"Acción","valor":345.8,"coste":345.8,"dividendos":12.6,"fecha":"2024-11-27","notas":"TEP","qty":4},{"id":"33ae4437","nombre":"UnitedHealth Group","tipo":"Acción","valor":776.37,"coste":776.37,"dividendos":11.9,"fecha":"2025-07-10","notas":"UNH","qty":3}],"metales":[],"metas":[],"historial":[{"mes":"2022-10","cuentas":{},"inversiones":{"b83aac23":747.28,"49c9adb1":329.84,"8cdfee6d":424.51,"8d2bbbd9":743.85,"aeb12a8e":225.84,"753b0c63":569.91,"2bbf64a0":38.04,"f07e4282":561.23,"dce893e5":186.19,"91e1f331":510.52,"bacd622b":222.91,"b7e74978":516.83,"e59f1c4f":1021.66,"b004b3ec":329.09,"1d68d669":936.45,"caf162e9":92.0,"ba906cb5":886.48,"8decf9f9":345.8,"33ae4437":776.37},"metales":{},"aportacion":300},{"mes":"2022-12","cuentas":{},"inversiones":{"b83aac23":747.28,"49c9adb1":329.84,"8cdfee6d":424.51,"8d2bbbd9":743.85,"aeb12a8e":225.84,"753b0c63":569.91,"2bbf64a0":38.04,"f07e4282":561.23,"dce893e5":186.19,"91e1f331":510.52,"bacd622b":222.91,"b7e74978":516.83,"e59f1c4f":1021.66,"b004b3ec":329.09,"1d68d669":936.45,"caf162e9":92.0,"ba906cb5":886.48,"8decf9f9":345.8,"33ae4437":776.37},"metales":{},"aportacion":300},{"mes":"2023-02","cuentas":{},"inversiones":{"b83aac23":747.28,"49c9adb1":329.84,"8cdfee6d":424.51,"8d2bbbd9":743.85,"aeb12a8e":225.84,"753b0c63":569.91,"2bbf64a0":38.04,"f07e4282":561.23,"dce893e5":186.19,"91e1f331":510.52,"bacd622b":222.91,"b7e74978":516.83,"e59f1c4f":1021.66,"b004b3ec":329.09,"1d68d669":936.45,"caf162e9":92.0,"ba906cb5":886.48,"8decf9f9":345.8,"33ae4437":776.37},"metales":{},"aportacion":300},{"mes":"2023-03","cuentas":{},"inversiones":{"b83aac23":747.28,"49c9adb1":329.84,"8cdfee6d":424.51,"8d2bbbd9":743.85,"aeb12a8e":225.84,"753b0c63":569.91,"2bbf64a0":38.04,"f07e4282":561.23,"dce893e5":186.19,"91e1f331":510.52,"bacd622b":222.91,"b7e74978":516.83,"e59f1c4f":1021.66,"b004b3ec":329.09,"1d68d669":936.45,"caf162e9":92.0,"ba906cb5":886.48,"8decf9f9":345.8,"33ae4437":776.37},"metales":{},"aportacion":200},{"mes":"2023-05","cuentas":{},"inversiones":{"b83aac23":747.28,"49c9adb1":329.84,"8cdfee6d":424.51,"8d2bbbd9":743.85,"aeb12a8e":225.84,"753b0c63":569.91,"2bbf64a0":38.04,"f07e4282":561.23,"dce893e5":186.19,"91e1f331":510.52,"bacd622b":222.91,"b7e74978":516.83,"e59f1c4f":1021.66,"b004b3ec":329.09,"1d68d669":936.45,"caf162e9":92.0,"ba906cb5":886.48,"8decf9f9":345.8,"33ae4437":776.37},"metales":{},"aportacion":300},{"mes":"2023-07","cuentas":{},"inversiones":{"b83aac23":747.28,"49c9adb1":329.84,"8cdfee6d":424.51,"8d2bbbd9":743.85,"aeb12a8e":225.84,"753b0c63":569.91,"2bbf64a0":38.04,"f07e4282":561.23,"dce893e5":186.19,"91e1f331":510.52,"bacd622b":222.91,"b7e74978":516.83,"e59f1c4f":1021.66,"b004b3ec":329.09,"1d68d669":936.45,"caf162e9":92.0,"ba906cb5":886.48,"8decf9f9":345.8,"33ae4437":776.37},"metales":{},"aportacion":750},{"mes":"2023-12","cuentas":{},"inversiones":{"b83aac23":747.28,"49c9adb1":329.84,"8cdfee6d":424.51,"8d2bbbd9":743.85,"aeb12a8e":225.84,"753b0c63":569.91,"2bbf64a0":38.04,"f07e4282":561.23,"dce893e5":186.19,"91e1f331":510.52,"bacd622b":222.91,"b7e74978":516.83,"e59f1c4f":1021.66,"b004b3ec":329.09,"1d68d669":936.45,"caf162e9":92.0,"ba906cb5":886.48,"8decf9f9":345.8,"33ae4437":776.37},"metales":{},"aportacion":350},{"mes":"2024-02","cuentas":{},"inversiones":{"b83aac23":747.28,"49c9adb1":329.84,"8cdfee6d":424.51,"8d2bbbd9":743.85,"aeb12a8e":225.84,"753b0c63":569.91,"2bbf64a0":38.04,"f07e4282":561.23,"dce893e5":186.19,"91e1f331":510.52,"bacd622b":222.91,"b7e74978":516.83,"e59f1c4f":1021.66,"b004b3ec":329.09,"1d68d669":936.45,"caf162e9":92.0,"ba906cb5":886.48,"8decf9f9":345.8,"33ae4437":776.37},"metales":{},"aportacion":400},{"mes":"2024-03","cuentas":{},"inversiones":{"b83aac23":747.28,"49c9adb1":329.84,"8cdfee6d":424.51,"8d2bbbd9":743.85,"aeb12a8e":225.84,"753b0c63":569.91,"2bbf64a0":38.04,"f07e4282":561.23,"dce893e5":186.19,"91e1f331":510.52,"bacd622b":222.91,"b7e74978":516.83,"e59f1c4f":1021.66,"b004b3ec":329.09,"1d68d669":936.45,"caf162e9":92.0,"ba906cb5":886.48,"8decf9f9":345.8,"33ae4437":776.37},"metales":{},"aportacion":800},{"mes":"2024-05","cuentas":{},"inversiones":{"b83aac23":747.28,"49c9adb1":329.84,"8cdfee6d":424.51,"8d2bbbd9":743.85,"aeb12a8e":225.84,"753b0c63":569.91,"2bbf64a0":38.04,"f07e4282":561.23,"dce893e5":186.19,"91e1f331":510.52,"bacd622b":222.91,"b7e74978":516.83,"e59f1c4f":1021.66,"b004b3ec":329.09,"1d68d669":936.45,"caf162e9":92.0,"ba906cb5":886.48,"8decf9f9":345.8,"33ae4437":776.37},"metales":{},"aportacion":400},{"mes":"2024-06","cuentas":{},"inversiones":{"b83aac23":747.28,"49c9adb1":329.84,"8cdfee6d":424.51,"8d2bbbd9":743.85,"aeb12a8e":225.84,"753b0c63":569.91,"2bbf64a0":38.04,"f07e4282":561.23,"dce893e5":186.19,"91e1f331":510.52,"bacd622b":222.91,"b7e74978":516.83,"e59f1c4f":1021.66,"b004b3ec":329.09,"1d68d669":936.45,"caf162e9":92.0,"ba906cb5":886.48,"8decf9f9":345.8,"33ae4437":776.37},"metales":{},"aportacion":400},{"mes":"2024-09","cuentas":{},"inversiones":{"b83aac23":747.28,"49c9adb1":329.84,"8cdfee6d":424.51,"8d2bbbd9":743.85,"aeb12a8e":225.84,"753b0c63":569.91,"2bbf64a0":38.04,"f07e4282":561.23,"dce893e5":186.19,"91e1f331":510.52,"bacd622b":222.91,"b7e74978":516.83,"e59f1c4f":1021.66,"b004b3ec":329.09,"1d68d669":936.45,"caf162e9":92.0,"ba906cb5":886.48,"8decf9f9":345.8,"33ae4437":776.37},"metales":{},"aportacion":400},{"mes":"2024-12","cuentas":{},"inversiones":{"b83aac23":747.28,"49c9adb1":329.84,"8cdfee6d":424.51,"8d2bbbd9":743.85,"aeb12a8e":225.84,"753b0c63":569.91,"2bbf64a0":38.04,"f07e4282":561.23,"dce893e5":186.19,"91e1f331":510.52,"bacd622b":222.91,"b7e74978":516.83,"e59f1c4f":1021.66,"b004b3ec":329.09,"1d68d669":936.45,"caf162e9":92.0,"ba906cb5":886.48,"8decf9f9":345.8,"33ae4437":776.37},"metales":{},"aportacion":400},{"mes":"2025-04","cuentas":{},"inversiones":{"b83aac23":747.28,"49c9adb1":329.84,"8cdfee6d":424.51,"8d2bbbd9":743.85,"aeb12a8e":225.84,"753b0c63":569.91,"2bbf64a0":38.04,"f07e4282":561.23,"dce893e5":186.19,"91e1f331":510.52,"bacd622b":222.91,"b7e74978":516.83,"e59f1c4f":1021.66,"b004b3ec":329.09,"1d68d669":936.45,"caf162e9":92.0,"ba906cb5":886.48,"8decf9f9":345.8,"33ae4437":776.37},"metales":{},"aportacion":1250},{"mes":"2025-05","cuentas":{},"inversiones":{"b83aac23":747.28,"49c9adb1":329.84,"8cdfee6d":424.51,"8d2bbbd9":743.85,"aeb12a8e":225.84,"753b0c63":569.91,"2bbf64a0":38.04,"f07e4282":561.23,"dce893e5":186.19,"91e1f331":510.52,"bacd622b":222.91,"b7e74978":516.83,"e59f1c4f":1021.66,"b004b3ec":329.09,"1d68d669":936.45,"caf162e9":92.0,"ba906cb5":886.48,"8decf9f9":345.8,"33ae4437":776.37},"metales":{},"aportacion":800},{"mes":"2025-06","cuentas":{},"inversiones":{"b83aac23":747.28,"49c9adb1":329.84,"8cdfee6d":424.51,"8d2bbbd9":743.85,"aeb12a8e":225.84,"753b0c63":569.91,"2bbf64a0":38.04,"f07e4282":561.23,"dce893e5":186.19,"91e1f331":510.52,"bacd622b":222.91,"b7e74978":516.83,"e59f1c4f":1021.66,"b004b3ec":329.09,"1d68d669":936.45,"caf162e9":92.0,"ba906cb5":886.48,"8decf9f9":345.8,"33ae4437":776.37},"metales":{},"aportacion":434},{"mes":"2025-11","cuentas":{},"inversiones":{"b83aac23":747.28,"49c9adb1":329.84,"8cdfee6d":424.51,"8d2bbbd9":743.85,"aeb12a8e":225.84,"753b0c63":569.91,"2bbf64a0":38.04,"f07e4282":561.23,"dce893e5":186.19,"91e1f331":510.52,"bacd622b":222.91,"b7e74978":516.83,"e59f1c4f":1021.66,"b004b3ec":329.09,"1d68d669":936.45,"caf162e9":92.0,"ba906cb5":886.48,"8decf9f9":345.8,"33ae4437":776.37},"metales":{},"aportacion":700},{"mes":"2025-12","cuentas":{},"inversiones":{"b83aac23":747.28,"49c9adb1":329.84,"8cdfee6d":424.51,"8d2bbbd9":743.85,"aeb12a8e":225.84,"753b0c63":569.91,"2bbf64a0":38.04,"f07e4282":561.23,"dce893e5":186.19,"91e1f331":510.52,"bacd622b":222.91,"b7e74978":516.83,"e59f1c4f":1021.66,"b004b3ec":329.09,"1d68d669":936.45,"caf162e9":92.0,"ba906cb5":886.48,"8decf9f9":345.8,"33ae4437":776.37},"metales":{},"aportacion":800},{"mes":"2026-01","cuentas":{},"inversiones":{"b83aac23":747.28,"49c9adb1":329.84,"8cdfee6d":424.51,"8d2bbbd9":743.85,"aeb12a8e":225.84,"753b0c63":569.91,"2bbf64a0":38.04,"f07e4282":561.23,"dce893e5":186.19,"91e1f331":510.52,"bacd622b":222.91,"b7e74978":516.83,"e59f1c4f":1021.66,"b004b3ec":329.09,"1d68d669":936.45,"caf162e9":92.0,"ba906cb5":886.48,"8decf9f9":345.8,"33ae4437":776.37},"metales":{},"aportacion":500}]};
+
+// Yahoo Finance ticker map (símbolo IBKR → ticker Yahoo)
+const YAHOO_TICKER_MAP = {
+  "327":    "0327.HK",   // Pax Global Technology — Hong Kong
+  "869":    "0869.HK",   // Playmates Holdings — Hong Kong
+  "AAF":    "AAF.L",     // Airtel Africa — London (GBp)
+  "BABA":   "BABA",      // Alibaba ADR — NYSE
+  "BTU":    "BTU",       // Peabody Energy — NYSE
+  "GLNG":   "GLNG",      // Golar LNG — Nasdaq
+  "HQ3":    "COOL",      // Cool Co (merged) — Oslo/OTC
+  "HSBK":   "HSBK.L",   // Halyk Savings Bank GDR — London (USD)
+  "IGC":    "IGC.L",     // India Capital Growth Fund — London (GBp)
+  "IGCl":   "IGC.L",     // India Capital Growth Fund 2º lote — London (GBp)
+  "KIST":   "KIST.L",   // Kistos Holdings — London (GBp)
+  "KSPI":   "KSPI",      // Kaspi.kz ADR — Nasdaq
+  "META":   "META",      // Meta Platforms — Nasdaq
+  "MSFT":   "MSFT",      // Microsoft — Nasdaq
+  "NA9":    "NA9.DE",    // Nagarro SE — Xetra (EUR)
+  "NEON":   "NEON",      // Neonode Inc — Nasdaq
+  "NOVO B": "NOVO-B.CO", // Novo Nordisk B — Copenhagen (DKK)
+  "TEP":    "TEP.PA",    // Teleperformance — Euronext Paris (EUR)
+  "UNH":    "UNH"        // UnitedHealth Group — NYSE
+};
+
+let S = JSON.parse(JSON.stringify(IBKR_SEED));
+S.historicalNav = []; // [{mes, nav, invested, source}]
+S.txns = [];          // raw transactions from CSV for NAV reconstruction
+let charts = {};
+let editInvId = null, editCuentaId = null, editMetalId = null, editMetaId = null;
+
+// ─── STORAGE ─────────────────────────────────────────────────────────────────
 function load() {
   const raw = localStorage.getItem(STORAGE_KEY);
-  if (raw) { try { S = { ...S, ...JSON.parse(raw) }; } catch(e){} }
+  if (raw) {
+    try {
+      const saved = JSON.parse(raw);
+      S = { ...S, ...saved };
+      // Backfill qty from seed if missing (upgrade from older version)
+      S.inversiones.forEach(inv => {
+        if (!inv.qty) {
+          const seed = IBKR_SEED.inversiones.find(s => s.id === inv.id || s.notas === inv.notas);
+          if (seed) inv.qty = seed.qty;
+          else inv.qty = 1;
+        }
+      });
+    } catch(e) {}
+  }
 }
 function save() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(S));
   const el = document.getElementById('last-updated-sidebar');
-  if (el) el.textContent = 'Guardado ' + new Date().toLocaleTimeString('es-ES', {hour:'2-digit',minute:'2-digit'});
+  if (el) el.textContent = 'Guardado ' + new Date().toLocaleTimeString('es-ES', {hour:'2-digit', minute:'2-digit'});
 }
 function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
 function fmt(n) {
   if (n === undefined || n === null || isNaN(n)) return '—';
   return new Intl.NumberFormat('es-ES', {style:'currency', currency: S.moneda||'EUR', maximumFractionDigits:0}).format(n);
 }
+function fmtExact(n) {
+  if (n === undefined || n === null || isNaN(n)) return '—';
+  return new Intl.NumberFormat('es-ES', {style:'currency', currency: S.moneda||'EUR', minimumFractionDigits:2, maximumFractionDigits:2}).format(n);
+}
 function fmtPct(n) { return isNaN(n) ? '—' : (n>=0?'+':'') + n.toFixed(1) + '%'; }
 function fmtMes(m) { if (!m) return '—'; const [y,mo] = m.split('-'); return new Date(y,mo-1).toLocaleDateString('es-ES',{month:'short',year:'numeric'}); }
 
-// ─── INIT ─────────────────────────────────────────────────────────────────────
-const IBKR_SEED = {"nombre": "Alfonso", "moneda": "EUR", "cuentas": [{"id": "cash01", "nombre": "Efectivo IBKR", "banco": "Interactive Brokers", "tipo": "Ahorro", "valor": 883}], "inversiones": [{"id": "b83aac23", "nombre": "Playmates Toys Ltd", "tipo": "Acción", "valor": 747.28, "coste": 747.28, "dividendos": 135.06, "fecha": "2023-08-02", "notas": "327", "qty": 1000}, {"id": "49c9adb1", "nombre": "Playmates Holdings Ltd", "tipo": "Acción", "valor": 329.84, "coste": 329.84, "dividendos": 69.42, "fecha": "2024-04-02", "notas": "869", "qty": 4000}, {"id": "8cdfee6d", "nombre": "Airtel Africa PLC", "tipo": "Acción", "valor": 424.51, "coste": 424.51, "dividendos": 34.51, "fecha": "2024-05-15", "notas": "AAF", "qty": 300}, {"id": "8d2bbbd9", "nombre": "Alibaba Group ADR", "tipo": "Acción", "valor": 743.85, "coste": 743.85, "dividendos": 26.44, "fecha": "2024-01-05", "notas": "BABA", "qty": 11}, {"id": "aeb12a8e", "nombre": "Peabody Energy", "tipo": "Acción", "valor": 225.84, "coste": 225.84, "dividendos": 5.39, "fecha": "2023-02-21", "notas": "BTU", "qty": 10}, {"id": "753b0c63", "nombre": "Golar LNG Ltd", "tipo": "Acción", "valor": 569.91, "coste": 569.91, "dividendos": 41.26, "fecha": "2023-01-25", "notas": "GLNG", "qty": 22}, {"id": "2bbf64a0", "nombre": "Cool Co Ltd", "tipo": "Acción", "valor": 38.04, "coste": 38.04, "dividendos": 8.34, "fecha": "2023-02-21", "notas": "HQ3", "qty": 3}, {"id": "f07e4282", "nombre": "Halyk Savings Bank GDR", "tipo": "Acción", "valor": 561.23, "coste": 561.23, "dividendos": 182.7, "fecha": "2024-03-08", "notas": "HSBK", "qty": 35}, {"id": "dce893e5", "nombre": "India Capital Growth Fund", "tipo": "Acción", "valor": 186.19, "coste": 186.19, "dividendos": 0.0, "fecha": "2024-08-05", "notas": "IGC", "qty": 90}, {"id": "91e1f331", "nombre": "India Capital Growth Fund", "tipo": "Acción", "valor": 510.52, "coste": 510.52, "dividendos": 0.0, "fecha": "2025-05-28", "notas": "IGCl", "qty": 250}, {"id": "bacd622b", "nombre": "Kistos Holdings PLC", "tipo": "Acción", "valor": 222.91, "coste": 222.91, "dividendos": 0.0, "fecha": "2023-03-14", "notas": "KIST", "qty": 65}, {"id": "b7e74978", "nombre": "JSC Kaspi.kz ADR", "tipo": "Acción", "valor": 516.83, "coste": 516.83, "dividendos": 20.3, "fecha": "2024-03-05", "notas": "KSPI", "qty": 6}, {"id": "e59f1c4f", "nombre": "Meta Platforms", "tipo": "Acción", "valor": 1021.66, "coste": 1021.66, "dividendos": 1.88, "fecha": "2025-04-03", "notas": "META", "qty": 2}, {"id": "b004b3ec", "nombre": "Microsoft Corp", "tipo": "Acción", "valor": 329.09, "coste": 329.09, "dividendos": 2.1, "fecha": "2025-04-07", "notas": "MSFT", "qty": 1}, {"id": "1d68d669", "nombre": "Nagarro SE", "tipo": "Acción", "valor": 936.45, "coste": 936.45, "dividendos": 12.0, "fecha": "2022-10-20", "notas": "NA9", "qty": 12}, {"id": "caf162e9", "nombre": "Neonode Inc", "tipo": "Acción", "valor": 92.0, "coste": 92.0, "dividendos": 0.0, "fecha": "2023-01-27", "notas": "NEON", "qty": 10}, {"id": "ba906cb5", "nombre": "Novo Nordisk A/S-B", "tipo": "Acción", "valor": 886.48, "coste": 886.48, "dividendos": 0.0, "fecha": "2025-12-30", "notas": "NOVO B", "qty": 20}, {"id": "8decf9f9", "nombre": "Teleperformance", "tipo": "Acción", "valor": 345.8, "coste": 345.8, "dividendos": 12.6, "fecha": "2024-11-27", "notas": "TEP", "qty": 4}, {"id": "33ae4437", "nombre": "UnitedHealth Group", "tipo": "Acción", "valor": 776.37, "coste": 776.37, "dividendos": 11.9, "fecha": "2025-07-10", "notas": "UNH", "qty": 3}], "metales": [], "metas": [], "historial": [{"mes": "2022-10", "cuentas": {}, "inversiones": {"b83aac23": 747.28, "49c9adb1": 329.84, "8cdfee6d": 424.51, "8d2bbbd9": 743.85, "aeb12a8e": 225.84, "753b0c63": 569.91, "2bbf64a0": 38.04, "f07e4282": 561.23, "dce893e5": 186.19, "91e1f331": 510.52, "bacd622b": 222.91, "b7e74978": 516.83, "e59f1c4f": 1021.66, "b004b3ec": 329.09, "1d68d669": 936.45, "caf162e9": 92.0, "ba906cb5": 886.48, "8decf9f9": 345.8, "33ae4437": 776.37}, "metales": {}, "aportacion": 300}, {"mes": "2022-12", "cuentas": {}, "inversiones": {"b83aac23": 747.28, "49c9adb1": 329.84, "8cdfee6d": 424.51, "8d2bbbd9": 743.85, "aeb12a8e": 225.84, "753b0c63": 569.91, "2bbf64a0": 38.04, "f07e4282": 561.23, "dce893e5": 186.19, "91e1f331": 510.52, "bacd622b": 222.91, "b7e74978": 516.83, "e59f1c4f": 1021.66, "b004b3ec": 329.09, "1d68d669": 936.45, "caf162e9": 92.0, "ba906cb5": 886.48, "8decf9f9": 345.8, "33ae4437": 776.37}, "metales": {}, "aportacion": 300}, {"mes": "2023-02", "cuentas": {}, "inversiones": {"b83aac23": 747.28, "49c9adb1": 329.84, "8cdfee6d": 424.51, "8d2bbbd9": 743.85, "aeb12a8e": 225.84, "753b0c63": 569.91, "2bbf64a0": 38.04, "f07e4282": 561.23, "dce893e5": 186.19, "91e1f331": 510.52, "bacd622b": 222.91, "b7e74978": 516.83, "e59f1c4f": 1021.66, "b004b3ec": 329.09, "1d68d669": 936.45, "caf162e9": 92.0, "ba906cb5": 886.48, "8decf9f9": 345.8, "33ae4437": 776.37}, "metales": {}, "aportacion": 300}, {"mes": "2023-03", "cuentas": {}, "inversiones": {"b83aac23": 747.28, "49c9adb1": 329.84, "8cdfee6d": 424.51, "8d2bbbd9": 743.85, "aeb12a8e": 225.84, "753b0c63": 569.91, "2bbf64a0": 38.04, "f07e4282": 561.23, "dce893e5": 186.19, "91e1f331": 510.52, "bacd622b": 222.91, "b7e74978": 516.83, "e59f1c4f": 1021.66, "b004b3ec": 329.09, "1d68d669": 936.45, "caf162e9": 92.0, "ba906cb5": 886.48, "8decf9f9": 345.8, "33ae4437": 776.37}, "metales": {}, "aportacion": 200}, {"mes": "2023-05", "cuentas": {}, "inversiones": {"b83aac23": 747.28, "49c9adb1": 329.84, "8cdfee6d": 424.51, "8d2bbbd9": 743.85, "aeb12a8e": 225.84, "753b0c63": 569.91, "2bbf64a0": 38.04, "f07e4282": 561.23, "dce893e5": 186.19, "91e1f331": 510.52, "bacd622b": 222.91, "b7e74978": 516.83, "e59f1c4f": 1021.66, "b004b3ec": 329.09, "1d68d669": 936.45, "caf162e9": 92.0, "ba906cb5": 886.48, "8decf9f9": 345.8, "33ae4437": 776.37}, "metales": {}, "aportacion": 300}, {"mes": "2023-07", "cuentas": {}, "inversiones": {"b83aac23": 747.28, "49c9adb1": 329.84, "8cdfee6d": 424.51, "8d2bbbd9": 743.85, "aeb12a8e": 225.84, "753b0c63": 569.91, "2bbf64a0": 38.04, "f07e4282": 561.23, "dce893e5": 186.19, "91e1f331": 510.52, "bacd622b": 222.91, "b7e74978": 516.83, "e59f1c4f": 1021.66, "b004b3ec": 329.09, "1d68d669": 936.45, "caf162e9": 92.0, "ba906cb5": 886.48, "8decf9f9": 345.8, "33ae4437": 776.37}, "metales": {}, "aportacion": 750}, {"mes": "2023-12", "cuentas": {}, "inversiones": {"b83aac23": 747.28, "49c9adb1": 329.84, "8cdfee6d": 424.51, "8d2bbbd9": 743.85, "aeb12a8e": 225.84, "753b0c63": 569.91, "2bbf64a0": 38.04, "f07e4282": 561.23, "dce893e5": 186.19, "91e1f331": 510.52, "bacd622b": 222.91, "b7e74978": 516.83, "e59f1c4f": 1021.66, "b004b3ec": 329.09, "1d68d669": 936.45, "caf162e9": 92.0, "ba906cb5": 886.48, "8decf9f9": 345.8, "33ae4437": 776.37}, "metales": {}, "aportacion": 350}, {"mes": "2024-02", "cuentas": {}, "inversiones": {"b83aac23": 747.28, "49c9adb1": 329.84, "8cdfee6d": 424.51, "8d2bbbd9": 743.85, "aeb12a8e": 225.84, "753b0c63": 569.91, "2bbf64a0": 38.04, "f07e4282": 561.23, "dce893e5": 186.19, "91e1f331": 510.52, "bacd622b": 222.91, "b7e74978": 516.83, "e59f1c4f": 1021.66, "b004b3ec": 329.09, "1d68d669": 936.45, "caf162e9": 92.0, "ba906cb5": 886.48, "8decf9f9": 345.8, "33ae4437": 776.37}, "metales": {}, "aportacion": 400}, {"mes": "2024-03", "cuentas": {}, "inversiones": {"b83aac23": 747.28, "49c9adb1": 329.84, "8cdfee6d": 424.51, "8d2bbbd9": 743.85, "aeb12a8e": 225.84, "753b0c63": 569.91, "2bbf64a0": 38.04, "f07e4282": 561.23, "dce893e5": 186.19, "91e1f331": 510.52, "bacd622b": 222.91, "b7e74978": 516.83, "e59f1c4f": 1021.66, "b004b3ec": 329.09, "1d68d669": 936.45, "caf162e9": 92.0, "ba906cb5": 886.48, "8decf9f9": 345.8, "33ae4437": 776.37}, "metales": {}, "aportacion": 800}, {"mes": "2024-05", "cuentas": {}, "inversiones": {"b83aac23": 747.28, "49c9adb1": 329.84, "8cdfee6d": 424.51, "8d2bbbd9": 743.85, "aeb12a8e": 225.84, "753b0c63": 569.91, "2bbf64a0": 38.04, "f07e4282": 561.23, "dce893e5": 186.19, "91e1f331": 510.52, "bacd622b": 222.91, "b7e74978": 516.83, "e59f1c4f": 1021.66, "b004b3ec": 329.09, "1d68d669": 936.45, "caf162e9": 92.0, "ba906cb5": 886.48, "8decf9f9": 345.8, "33ae4437": 776.37}, "metales": {}, "aportacion": 400}, {"mes": "2024-06", "cuentas": {}, "inversiones": {"b83aac23": 747.28, "49c9adb1": 329.84, "8cdfee6d": 424.51, "8d2bbbd9": 743.85, "aeb12a8e": 225.84, "753b0c63": 569.91, "2bbf64a0": 38.04, "f07e4282": 561.23, "dce893e5": 186.19, "91e1f331": 510.52, "bacd622b": 222.91, "b7e74978": 516.83, "e59f1c4f": 1021.66, "b004b3ec": 329.09, "1d68d669": 936.45, "caf162e9": 92.0, "ba906cb5": 886.48, "8decf9f9": 345.8, "33ae4437": 776.37}, "metales": {}, "aportacion": 400}, {"mes": "2024-09", "cuentas": {}, "inversiones": {"b83aac23": 747.28, "49c9adb1": 329.84, "8cdfee6d": 424.51, "8d2bbbd9": 743.85, "aeb12a8e": 225.84, "753b0c63": 569.91, "2bbf64a0": 38.04, "f07e4282": 561.23, "dce893e5": 186.19, "91e1f331": 510.52, "bacd622b": 222.91, "b7e74978": 516.83, "e59f1c4f": 1021.66, "b004b3ec": 329.09, "1d68d669": 936.45, "caf162e9": 92.0, "ba906cb5": 886.48, "8decf9f9": 345.8, "33ae4437": 776.37}, "metales": {}, "aportacion": 400}, {"mes": "2024-12", "cuentas": {}, "inversiones": {"b83aac23": 747.28, "49c9adb1": 329.84, "8cdfee6d": 424.51, "8d2bbbd9": 743.85, "aeb12a8e": 225.84, "753b0c63": 569.91, "2bbf64a0": 38.04, "f07e4282": 561.23, "dce893e5": 186.19, "91e1f331": 510.52, "bacd622b": 222.91, "b7e74978": 516.83, "e59f1c4f": 1021.66, "b004b3ec": 329.09, "1d68d669": 936.45, "caf162e9": 92.0, "ba906cb5": 886.48, "8decf9f9": 345.8, "33ae4437": 776.37}, "metales": {}, "aportacion": 400}, {"mes": "2025-04", "cuentas": {}, "inversiones": {"b83aac23": 747.28, "49c9adb1": 329.84, "8cdfee6d": 424.51, "8d2bbbd9": 743.85, "aeb12a8e": 225.84, "753b0c63": 569.91, "2bbf64a0": 38.04, "f07e4282": 561.23, "dce893e5": 186.19, "91e1f331": 510.52, "bacd622b": 222.91, "b7e74978": 516.83, "e59f1c4f": 1021.66, "b004b3ec": 329.09, "1d68d669": 936.45, "caf162e9": 92.0, "ba906cb5": 886.48, "8decf9f9": 345.8, "33ae4437": 776.37}, "metales": {}, "aportacion": 1250}, {"mes": "2025-05", "cuentas": {}, "inversiones": {"b83aac23": 747.28, "49c9adb1": 329.84, "8cdfee6d": 424.51, "8d2bbbd9": 743.85, "aeb12a8e": 225.84, "753b0c63": 569.91, "2bbf64a0": 38.04, "f07e4282": 561.23, "dce893e5": 186.19, "91e1f331": 510.52, "bacd622b": 222.91, "b7e74978": 516.83, "e59f1c4f": 1021.66, "b004b3ec": 329.09, "1d68d669": 936.45, "caf162e9": 92.0, "ba906cb5": 886.48, "8decf9f9": 345.8, "33ae4437": 776.37}, "metales": {}, "aportacion": 800}, {"mes": "2025-06", "cuentas": {}, "inversiones": {"b83aac23": 747.28, "49c9adb1": 329.84, "8cdfee6d": 424.51, "8d2bbbd9": 743.85, "aeb12a8e": 225.84, "753b0c63": 569.91, "2bbf64a0": 38.04, "f07e4282": 561.23, "dce893e5": 186.19, "91e1f331": 510.52, "bacd622b": 222.91, "b7e74978": 516.83, "e59f1c4f": 1021.66, "b004b3ec": 329.09, "1d68d669": 936.45, "caf162e9": 92.0, "ba906cb5": 886.48, "8decf9f9": 345.8, "33ae4437": 776.37}, "metales": {}, "aportacion": 434}, {"mes": "2025-11", "cuentas": {}, "inversiones": {"b83aac23": 747.28, "49c9adb1": 329.84, "8cdfee6d": 424.51, "8d2bbbd9": 743.85, "aeb12a8e": 225.84, "753b0c63": 569.91, "2bbf64a0": 38.04, "f07e4282": 561.23, "dce893e5": 186.19, "91e1f331": 510.52, "bacd622b": 222.91, "b7e74978": 516.83, "e59f1c4f": 1021.66, "b004b3ec": 329.09, "1d68d669": 936.45, "caf162e9": 92.0, "ba906cb5": 886.48, "8decf9f9": 345.8, "33ae4437": 776.37}, "metales": {}, "aportacion": 700}, {"mes": "2025-12", "cuentas": {}, "inversiones": {"b83aac23": 747.28, "49c9adb1": 329.84, "8cdfee6d": 424.51, "8d2bbbd9": 743.85, "aeb12a8e": 225.84, "753b0c63": 569.91, "2bbf64a0": 38.04, "f07e4282": 561.23, "dce893e5": 186.19, "91e1f331": 510.52, "bacd622b": 222.91, "b7e74978": 516.83, "e59f1c4f": 1021.66, "b004b3ec": 329.09, "1d68d669": 936.45, "caf162e9": 92.0, "ba906cb5": 886.48, "8decf9f9": 345.8, "33ae4437": 776.37}, "metales": {}, "aportacion": 800}, {"mes": "2026-01", "cuentas": {}, "inversiones": {"b83aac23": 747.28, "49c9adb1": 329.84, "8cdfee6d": 424.51, "8d2bbbd9": 743.85, "aeb12a8e": 225.84, "753b0c63": 569.91, "2bbf64a0": 38.04, "f07e4282": 561.23, "dce893e5": 186.19, "91e1f331": 510.52, "bacd622b": 222.91, "b7e74978": 516.83, "e59f1c4f": 1021.66, "b004b3ec": 329.09, "1d68d669": 936.45, "caf162e9": 92.0, "ba906cb5": 886.48, "8decf9f9": 345.8, "33ae4437": 776.37}, "metales": {}, "aportacion": 500}]};
-const YAHOO_TICKER_MAP = {"327": "0327.HK", "869": "0869.HK", "AAF": "AAF.L", "BABA": "BABA", "BTU": "BTU", "GLNG": "GLNG", "HQ3": "COOL", "HSBK": "HSBK.L", "IGC": "IGC.L", "IGCl": "IGC.L", "KIST": "KIST.L", "KSPI": "KSPI", "META": "META", "MSFT": "MSFT", "NA9": "NA9.DE", "NEON": "NEON", "NOVO B": "NOVO-B.CO", "TEP": "TEP.PA", "UNH": "UNH"};
+// ─── TOTALS ───────────────────────────────────────────────────────────────────
+function totalCuentas() { return S.cuentas.reduce((a,c) => a+c.valor, 0); }
+function totalInversiones() { return S.inversiones.reduce((a,c) => a+c.valor, 0); }
+function totalMetales() { return S.metales.reduce((a,c) => a+(c.qty*c.precio), 0); }
+function totalCosteInv() { return S.inversiones.reduce((a,c) => a+c.coste, 0); }
+function totalDividendos() { return S.inversiones.reduce((a,c) => a+(c.dividendos||0), 0); }
+function total() { return totalCuentas() + totalInversiones() + totalMetales(); }
 
-// Detect if running inside iframe (claude.ai) and warn user
+// ─── DETECT IFRAME ────────────────────────────────────────────────────────────
 (function() {
   try {
     if (window.self !== window.top) {
-      document.addEventListener('DOMContentLoaded', () => {
-        const w = document.getElementById('iframe-warning');
-        if (w) w.style.display = 'block';
-        const dl = document.getElementById('iframe-dl');
-        if (dl) dl.onclick = () => {
-          const blob = new Blob([document.documentElement.outerHTML], {type:'text/html'});
-          const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
-          a.download = 'patrimonio.html'; a.click();
-        };
-      });
+      document.getElementById('iframe-warning').style.display = 'block';
+      document.getElementById('iframe-dl').onclick = () => {
+        const blob = new Blob([document.documentElement.outerHTML], {type:'text/html'});
+        const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+        a.download = 'patrimonio.html'; a.click();
+      };
     }
   } catch(e) {
-    // cross-origin iframe — definitely not top level
-    document.addEventListener('DOMContentLoaded', () => {
-      const w = document.getElementById('iframe-warning');
-      if (w) w.style.display = 'block';
-    });
+    document.getElementById('iframe-warning').style.display = 'block';
   }
 })();
 
+// ─── INIT ─────────────────────────────────────────────────────────────────────
 window.onload = () => {
   load();
-  // Seed from IBKR CSV if no data saved yet
-  if (!S.nombre) {
-    S = { ...S, ...JSON.parse(JSON.stringify(IBKR_SEED)) };
-    save();
-  }
-  // Ensure qty is present on all inversiones (backfill from seed if missing)
-  S.inversiones.forEach(inv => {
-    if (!inv.qty && inv.notas) {
-      const seed = IBKR_SEED.inversiones.find(s => s.notas === inv.notas);
-      if (seed) inv.qty = seed.qty;
-    }
-    if (!inv.qty) inv.qty = 1;
-  });
-  document.getElementById('onboarding').style.display = 'none';
-  document.getElementById('app').style.display = 'flex';
-  initApp();
-  // Auto-refresh prices from Yahoo Finance on load
+  document.getElementById('sidebar-nombre').textContent = S.nombre || 'Alfonso';
+  showPage('dashboard');
+  // Auto-refresh prices on load
   refreshAllPrices();
 };
 
-function initApp() {
-  document.getElementById('sidebar-nombre').textContent = S.nombre;
-  showPage('dashboard');
-}
-
 // ─── LIVE PRICE REFRESH ───────────────────────────────────────────────────────
 async function refreshAllPrices() {
-  const invs = S.inversiones.filter(i => i.notas); // notas holds the IBKR symbol
+  const invs = S.inversiones.filter(i => i.notas);
   if (!invs.length) return;
 
   const statusEl = document.getElementById('refresh-status');
-  if (statusEl) { statusEl.textContent = 'Actualizando precios...'; statusEl.style.color = 'var(--text3)'; }
+  if (statusEl) { statusEl.textContent = '⟳ Obteniendo precios…'; statusEl.style.color = 'var(--text3)'; }
 
-  // Fetch FX rates to convert to EUR
+  // Fetch FX rates to convert everything to EUR
   const fxRates = { EUR: 1 };
   const fxPairs = ['USDEUR=X','GBPEUR=X','DKKEUR=X','HKDEUR=X','NOKEUR=X'];
   await Promise.allSettled(fxPairs.map(async pair => {
     try {
-      const r = await fetch('https://corsproxy.io/?' + encodeURIComponent('https://query2.finance.yahoo.com/v8/finance/chart/' + pair + '?interval=1d&range=1d'));
+      const r = await fetch('https://corsproxy.io/?' + encodeURIComponent(
+        'https://query2.finance.yahoo.com/v8/finance/chart/' + pair + '?interval=1d&range=1d'));
       const d = await r.json();
       const p = d?.chart?.result?.[0]?.meta?.regularMarketPrice;
       if (p) fxRates[pair.replace('EUR=X','')] = p;
@@ -702,22 +607,23 @@ async function refreshAllPrices() {
     const ibkrSym = inv.notas;
     const yahooSym = YAHOO_TICKER_MAP[ibkrSym] || ibkrSym;
     try {
-      const r = await fetch('https://corsproxy.io/?' + encodeURIComponent('https://query2.finance.yahoo.com/v8/finance/chart/' + encodeURIComponent(yahooSym) + '?interval=1d&range=1d'));
+      const r = await fetch('https://corsproxy.io/?' + encodeURIComponent(
+        'https://query2.finance.yahoo.com/v8/finance/chart/' + encodeURIComponent(yahooSym) + '?interval=1d&range=1d'));
       const d = await r.json();
       const meta = d?.chart?.result?.[0]?.meta;
       if (!meta?.regularMarketPrice) throw new Error('no price');
       const rawPrice = meta.regularMarketPrice;
-      const currency = meta.currency || 'USD';
-      // GBp = peniques (bolsa de Londres) -> dividir entre 100 para obtener GBP
+      const currency = (meta.currency || 'USD').toUpperCase();
       let priceEur;
-      if (currency === 'GBp') {
+      if (currency === 'GBP') {
+        // GBp (peniques) — check if we need to divide by 100
+        const exchName = meta.exchangeName || '';
+        const isGBP = exchName.includes('LSE') || rawPrice < 500; // heuristic: GBp prices are large
         priceEur = (rawPrice / 100) * (fxRates['GBP'] ?? 0.85);
       } else {
-        const cur = currency.toUpperCase();
-        const fx = fxRates[cur] !== undefined ? fxRates[cur] : (fxRates['USD'] || 0.92);
+        const fx = fxRates[currency] !== undefined ? fxRates[currency] : (fxRates['USD'] || 0.92);
         priceEur = rawPrice * fx;
       }
-      // Always look up the live object in S by id — async closures can hold stale refs
       const live = S.inversiones.find(i => i.id === invId);
       if (!live) return;
       const qty = live.qty || 1;
@@ -733,13 +639,13 @@ async function refreshAllPrices() {
   save();
   const now = new Date().toLocaleTimeString('es-ES', {hour:'2-digit', minute:'2-digit'});
   if (statusEl) {
-    statusEl.textContent = updated + ' precios actualizados · ' + now + (failed.length ? ' · sin datos: ' + failed.join(', ') : '');
+    const ok = updated === invs.length;
+    statusEl.innerHTML = `<span class="price-dot ${ok?'live':''}"></span>${updated}/${invs.length} precios · ${now}${failed.length ? ' · sin datos: '+failed.join(', ') : ''}`;
     statusEl.style.color = failed.length ? 'var(--amber)' : 'var(--green)';
   }
-  // Re-render whatever page is active
   const activePage = document.querySelector('.screen.active')?.id?.replace('page-','');
   if (activePage) showPage(activePage);
-  toast('Precios actualizados (' + updated + '/' + invs.length + ')');
+  toast(`Precios actualizados (${updated}/${invs.length})`);
 }
 
 // ─── NAVIGATION ──────────────────────────────────────────────────────────────
@@ -758,51 +664,43 @@ function showPage(name) {
   if (renderers[name]) renderers[name]();
 }
 
-// ─── TOTALS ───────────────────────────────────────────────────────────────────
-function totalCuentas() { return S.cuentas.reduce((a,c) => a+c.valor, 0); }
-function totalInversiones() { return S.inversiones.reduce((a,c) => a+c.valor, 0); }
-function totalMetales() { return S.metales.reduce((a,c) => a+(c.qty*c.precio), 0); }
-function totalCosteInv() { return S.inversiones.reduce((a,c) => a+c.coste, 0); }
-function totalDividendos() { return S.inversiones.reduce((a,c) => a+(c.dividendos||0), 0); }
-function total() { return totalCuentas() + totalInversiones() + totalMetales(); }
-
 // ─── DASHBOARD ───────────────────────────────────────────────────────────────
 function renderDashboard() {
   const tot = total(), inv = totalInversiones(), aho = totalCuentas(), met = totalMetales();
-  const coste = totalCosteInv(), ganancia = inv - coste;
-  const rentPct = coste > 0 ? ganancia/coste*100 : 0;
+  const coste = totalCosteInv(), ganancia = inv - coste + totalDividendos();
+  const rentPct = coste > 0 ? (inv - coste)/coste*100 : 0;
   const prevH = S.historial.length >= 2 ? S.historial[S.historial.length-2] : null;
   const prevTot = prevH ? (Object.values(prevH.cuentas||{}).reduce((a,b)=>a+b,0)+Object.values(prevH.inversiones||{}).reduce((a,b)=>a+b,0)+Object.values(prevH.metales||{}).reduce((a,b)=>a+b,0)) : null;
   const lastAp = S.historial.length > 0 ? (S.historial[S.historial.length-1].aportacion||0) : 0;
+  const totalAport = S.historial.reduce((a,h)=>a+(h.aportacion||0),0);
 
-  document.getElementById('dash-title').textContent = S.nombre ? `Patrimonio de ${S.nombre}` : 'Patrimonio total';
+  document.getElementById('dash-title').textContent = `Patrimonio de ${S.nombre}`;
   document.getElementById('dash-subtitle').textContent = new Date().toLocaleDateString('es-ES',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
 
+  const gpBruto = inv - coste;
   const metrics = [
-    { label: 'Total', value: fmt(tot), delta: prevTot !== null ? fmtPct((tot-prevTot)/prevTot*100)+' vs mes ant.' : 'inicio', pos: prevTot !== null ? tot>=prevTot : true },
-    { label: 'Inversiones', value: fmt(inv), delta: fmtPct(rentPct)+' rentabilidad', pos: rentPct>=0 },
-    { label: 'G/P inversiones', value: fmt(ganancia), delta: fmt(totalDividendos())+' dividendos', pos: ganancia>=0 },
-    { label: 'Aportado (último mes)', value: fmt(lastAp), delta: S.historial.length+' registros', pos: lastAp>=0 }
+    { label: 'Cartera total', value: fmt(tot), delta: prevTot !== null ? fmtPct((tot-prevTot)/prevTot*100)+' vs registro ant.' : 'primer registro', pos: prevTot !== null ? tot>=prevTot : true },
+    { label: 'Portfolio IBKR', value: fmt(inv), delta: `${fmtPct(rentPct)} vs coste ${fmt(coste)}`, pos: rentPct>=0 },
+    { label: 'G/P + dividendos', value: fmt(gpBruto + totalDividendos()), delta: `${fmt(gpBruto)} precio · ${fmt(totalDividendos())} div.`, pos: gpBruto>=0 },
+    { label: 'Total aportado', value: fmt(totalAport), delta: `${S.historial.length} meses registrados`, pos: true }
   ];
   document.getElementById('dash-metrics').innerHTML = metrics.map(m=>`
     <div class="metric">
       <div class="metric-label">${m.label}</div>
-      <div class="metric-value" style="color:${m.label==='G/P inversiones'?(ganancia>=0?'var(--green)':'var(--red)'):'var(--text)'}">${m.value}</div>
+      <div class="metric-value">${m.value}</div>
       <div class="metric-delta ${m.pos?'pos':'neg'}">${m.delta}</div>
     </div>`).join('');
 
-  // distribution chart
   destroyChart('chartDist');
   if (tot > 0) {
     charts['chartDist'] = new Chart(document.getElementById('chartDist'), {
       type: 'doughnut',
-      data: { labels: ['Ahorro','Inversiones','Metales'], datasets: [{ data: [aho,inv,met], backgroundColor: ['#3B6D11','#0C3F7A','#7A4F0A'], borderWidth: 0, hoverOffset: 3 }] },
-      options: { responsive:true, maintainAspectRatio:false, plugins:{ legend:{display:false}, tooltip:{callbacks:{label:ctx=>' '+fmt(ctx.raw)}}}, cutout:'62%' }
+      data: { labels: ['Efectivo','Portfolio','Metales'], datasets: [{ data: [aho,inv,met], backgroundColor: ['#3B6D11','#0C3F7A','#7A4F0A'], borderWidth: 0, hoverOffset: 3 }] },
+      options: { responsive:true, maintainAspectRatio:false, plugins:{ legend:{display:false}, tooltip:{callbacks:{label:ctx=>' '+fmt(ctx.raw)+' ('+Math.round(ctx.raw/tot*100)+'%)'}}}, cutout:'62%' }
     });
   }
 
-  // category list
-  const cats = [{l:'Ahorro y liquidez',v:aho,c:'#3B6D11'},{l:'Inversiones',v:inv,c:'#0C3F7A'},{l:'Metales preciosos',v:met,c:'#7A4F0A'}];
+  const cats = [{l:'Efectivo IBKR',v:aho,c:'#3B6D11'},{l:'Portfolio acciones',v:inv,c:'#0C3F7A'},{l:'Metales preciosos',v:met,c:'#7A4F0A'}];
   document.getElementById('dash-cat-list').innerHTML = cats.map(c=>`
     <div style="margin-bottom:14px;">
       <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:5px;">
@@ -812,131 +710,501 @@ function renderDashboard() {
       <div style="font-size:11px;color:var(--text3);margin-top:2px;font-family:var(--mono);">${tot>0?Math.round(c.v/tot*100):0}%</div>
     </div>`).join('');
 
-  // recent rows
   const allAssets = [
     ...S.cuentas.map(c=>({nom:c.nombre,tipo:c.tipo||'Corriente',val:c.valor,rent:null,cat:'aho'})),
-    ...S.inversiones.map(c=>({nom:c.nombre,tipo:c.tipo||'ETF',val:c.valor,rent:c.coste>0?(c.valor-c.coste)/c.coste*100:null,cat:'inv'})),
-    ...S.metales.map(c=>({nom:c.nombre,tipo:c.tipo||'Oro',val:c.qty*c.precio,rent:null,cat:'met'}))
-  ].sort((a,b)=>b.val-a.val).slice(0,8);
+    ...S.inversiones.map(i=>({nom:i.nombre,tipo:i.notas||i.tipo,val:i.valor,rent:i.coste>0?(i.valor-i.coste)/i.coste*100:null,cat:'inv'})),
+    ...S.metales.map(m=>({nom:m.nombre,tipo:m.tipo||'Oro',val:m.qty*m.precio,rent:null,cat:'met'}))
+  ].sort((a,b)=>b.val-a.val).slice(0,10);
   document.getElementById('dash-recent-rows').innerHTML = allAssets.map(a=>`
     <tr>
       <td>${a.nom}</td>
       <td><span class="badge ${a.cat==='inv'?'badge-blue':a.cat==='met'?'badge-amber':'badge-green'}">${a.tipo}</span></td>
       <td class="mono">${fmt(a.val)}</td>
       <td class="mono ${a.rent!==null?(a.rent>=0?'pos':'neg'):''}">${a.rent!==null?fmtPct(a.rent):'—'}</td>
-    </tr>`).join('') || '<tr><td colspan="4" style="text-align:center;color:var(--text3);padding:24px;">Sin activos registrados</td></tr>';
+    </tr>`).join('') || '<tr><td colspan="4" style="text-align:center;color:var(--text3);padding:24px;">Sin activos</td></tr>';
 }
 
-// ─── HISTORIAL ────────────────────────────────────────────────────────────────
+// ─── HISTORIAL — MOTOR DE NAV HISTÓRICO ──────────────────────────────────────
+// S.historicalNav = [{mes:'2022-10', nav:1234, invested:300, source:'yahoo'|'manual'}, …]
+// Extensible: funciona con cualquier cartera IBKR, no depende de datos hardcodeados.
+
+let _histRange = 'all'; // 'all' | '1y' | '2y'
+
+function setHistRange(r) {
+  _histRange = r;
+  ['all','1y','2y'].forEach(x => {
+    const btn = document.getElementById('hrange-' + x);
+    if (btn) { btn.style.background = x===r ? 'var(--text)' : 'var(--surface)'; btn.style.color = x===r ? 'var(--bg)' : 'var(--text)'; btn.style.borderColor = x===r ? 'var(--text)' : 'var(--border-strong)'; }
+  });
+  renderHistorial();
+}
+
+function filterByRange(nav) {
+  if (_histRange === 'all') return nav;
+  const now = new Date();
+  const cutoff = new Date(now.getFullYear() - (_histRange === '1y' ? 1 : 2), now.getMonth(), 1);
+  const cutStr = cutoff.toISOString().slice(0,7);
+  return nav.filter(n => n.mes >= cutStr);
+}
+
+// ── Step 1: derive month-by-month portfolio state from transactions ──────────
+// txns format (stored in S.txns after CSV import):
+// [{date, type, symbol, qty, price, priceCur, gross, comm, net, desc}]
+function buildMonthlyPortfolioStates() {
+  // Use S.txns if present (from CSV import), otherwise reconstruct from inversiones + seed
+  const txns = (S.txns || []).slice().sort((a,b) => a.date.localeCompare(b.date));
+
+  // If no raw transactions, build from current inversiones (graceful fallback)
+  if (!txns.length) {
+    return S.historial.map(h => ({
+      mes: h.mes,
+      positions: Object.fromEntries(S.inversiones.map(inv => [inv.notas || inv.id, { qty: inv.qty || 1, symbol: inv.notas || inv.id, yahooSym: YAHOO_TICKER_MAP[inv.notas] || inv.notas }])),
+      cashDeposited: h.aportacion || 0
+    }));
+  }
+
+  // Build exact portfolio state for each calendar month-end
+  // positions: {ibkrSym → {qty, avgCost}}
+  const positions = {};
+  let cumDeposited = 0;
+  const results = [];
+
+  // Generate list of all month-ends from first txn to now
+  const firstDate = txns[0]?.date?.slice(0,7) || '2022-10';
+  const nowMes = new Date().toISOString().slice(0,7);
+  const months = [];
+  let cur = firstDate;
+  while (cur <= nowMes) {
+    months.push(cur);
+    const [y, m] = cur.split('-').map(Number);
+    const next = m === 12 ? `${y+1}-01` : `${y}-${String(m+1).padStart(2,'0')}`;
+    cur = next;
+  }
+
+  let txnIdx = 0;
+  for (const mes of months) {
+    const monthEnd = mes + '-31'; // compare as string; all dates ≤ this are in month
+    const monthEndReal = new Date(parseInt(mes.slice(0,4)), parseInt(mes.slice(5,7)), 0).toISOString().slice(0,10);
+
+    // Apply all txns up to end of this month
+    while (txnIdx < txns.length && txns[txnIdx].date <= monthEndReal) {
+      const t = txns[txnIdx++];
+      const sym = t.symbol;
+      if (!sym || sym === '-') continue;
+
+      if (t.type === 'Buy') {
+        if (!positions[sym]) positions[sym] = { qty: 0, totalCost: 0 };
+        positions[sym].qty += t.qty;
+        positions[sym].totalCost += Math.abs(t.net);
+      } else if (t.type === 'Sell') {
+        if (positions[sym] && positions[sym].qty > 0) {
+          const sellQty = Math.abs(t.qty);
+          const avgCost = positions[sym].totalCost / positions[sym].qty;
+          positions[sym].totalCost -= avgCost * sellQty;
+          positions[sym].qty -= sellQty;
+        }
+      } else if (t.type === 'Deposit') {
+        cumDeposited += Math.abs(t.net);
+      }
+    }
+
+    // Snapshot active positions (qty > 0)
+    const snap = {};
+    for (const [sym, p] of Object.entries(positions)) {
+      if (p.qty > 0.001) {
+        snap[sym] = { qty: parseFloat(p.qty.toFixed(6)), yahooSym: YAHOO_TICKER_MAP[sym] || sym };
+      }
+    }
+
+    results.push({ mes, positions: snap, cumDeposited });
+  }
+  return results;
+}
+
+// ── Step 2: fetch historical monthly closing prices from Yahoo Finance ────────
+// Groups symbols by yahoo ticker, fetches full range in one call per ticker.
+async function fetchHistoricalPrices(monthlyStates, statusEl) {
+  // Collect all yahoo symbols needed and date range
+  const allSymbols = new Set();
+  monthlyStates.forEach(s => Object.values(s.positions).forEach(p => allSymbols.add(p.yahooSym)));
+
+  const firstMes = monthlyStates[0]?.mes || '2022-10';
+  const startTs = Math.floor(new Date(firstMes + '-01').getTime() / 1000);
+  const endTs = Math.floor(Date.now() / 1000) + 86400;
+
+  // Fetch FX rates for each month (we fetch current FX; for historical we use monthly close)
+  // Strategy: fetch monthly OHLCV for each FX pair too
+  const fxSymbols = ['USDEUR=X', 'GBPEUR=X', 'DKKEUR=X', 'HKDEUR=X'];
+  const historicalFX = {}; // {symbol → {mes → rate}}
+  const historicalPrices = {}; // {yahooSym → {mes → priceInOriginalCurrency}}
+
+  const allFetch = [...allSymbols, ...fxSymbols];
+  let done = 0;
+
+  if (statusEl) statusEl.textContent = `Descargando precios históricos (0/${allFetch.length})…`;
+
+  await Promise.allSettled(allFetch.map(async sym => {
+    try {
+      const url = `https://query2.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(sym)}?interval=1mo&period1=${startTs}&period2=${endTs}`;
+      const r = await fetch('https://corsproxy.io/?' + encodeURIComponent(url));
+      const d = await r.json();
+      const result = d?.chart?.result?.[0];
+      if (!result) throw new Error('no result');
+      const timestamps = result.timestamp || [];
+      const closes = result.indicators?.adjclose?.[0]?.adjclose || result.indicators?.quote?.[0]?.close || [];
+      const currency = result.meta?.currency || 'USD';
+
+      const byMes = {};
+      timestamps.forEach((ts, i) => {
+        const mes = new Date(ts * 1000).toISOString().slice(0,7);
+        if (closes[i] != null && !isNaN(closes[i])) byMes[mes] = { price: closes[i], currency };
+      });
+
+      if (fxSymbols.includes(sym)) historicalFX[sym] = byMes;
+      else historicalPrices[sym] = byMes;
+
+      done++;
+      if (statusEl) statusEl.textContent = `Descargando precios históricos (${done}/${allFetch.length})…`;
+    } catch(e) {
+      done++;
+      if (statusEl) statusEl.textContent = `Descargando precios históricos (${done}/${allFetch.length})…`;
+    }
+  }));
+
+  return { historicalPrices, historicalFX };
+}
+
+// ── Step 3: compute NAV for each month ───────────────────────────────────────
+function computeNAV(monthlyStates, historicalPrices, historicalFX) {
+  const getRate = (fxSym, mes) => {
+    const data = historicalFX[fxSym];
+    if (!data) return null;
+    // Try exact month, then nearest previous month
+    if (data[mes]) return data[mes].price;
+    const prev = Object.keys(data).filter(m => m <= mes).sort().pop();
+    return prev ? data[prev].price : null;
+  };
+
+  const getPrice = (yahooSym, mes) => {
+    const data = historicalPrices[yahooSym];
+    if (!data) return null;
+    if (data[mes]) return data[mes];
+    const prev = Object.keys(data).filter(m => m <= mes).sort().pop();
+    return prev ? data[prev] : null;
+  };
+
+  const toEur = (price, currency, mes) => {
+    if (!price) return null;
+    const cur = currency.toUpperCase();
+    if (cur === 'EUR') return price;
+    // GBp → divide by 100 then convert GBP→EUR
+    if (cur === 'GBP' || cur === 'GBP') {
+      // Yahoo returns GBp for London stocks (pence) but sometimes GBP
+      // Use a heuristic: if price > 50 and symbol ends in .L → likely GBp
+      const gbpRate = getRate('GBPEUR=X', mes) || 0.86;
+      return (price / 100) * gbpRate; // assume GBp
+    }
+    const fxMap = { 'USD': 'USDEUR=X', 'HKD': 'HKDEUR=X', 'DKK': 'DKKEUR=X', 'NOK': null };
+    const fxSym = fxMap[cur];
+    if (!fxSym) return price * 0.1; // fallback for unknown
+    const rate = getRate(fxSym, mes);
+    return rate ? price * rate : null;
+  };
+
+  return monthlyStates.map(state => {
+    let navPortfolio = 0;
+    let covered = 0, total = Object.keys(state.positions).length;
+
+    for (const [ibkrSym, pos] of Object.entries(state.positions)) {
+      const priceData = getPrice(pos.yahooSym, state.mes);
+      if (!priceData) continue;
+      const priceEur = toEur(priceData.price, priceData.currency, state.mes);
+      if (priceEur == null) continue;
+      navPortfolio += priceEur * pos.qty;
+      covered++;
+    }
+
+    // Add cash from IBKR (tracked via S.cuentas or fixed amount)
+    const cashVal = S.cuentas.reduce((a,c) => a + (c.banco === 'Interactive Brokers' ? c.valor : 0), 0);
+    const nav = navPortfolio + (state.mes === new Date().toISOString().slice(0,7) ? cashVal : 0);
+
+    return {
+      mes: state.mes,
+      nav: parseFloat(nav.toFixed(2)),
+      navPortfolio: parseFloat(navPortfolio.toFixed(2)),
+      invested: state.cumDeposited,
+      coverage: total > 0 ? Math.round(covered/total*100) : 0,
+      source: covered > 0 ? 'yahoo' : 'estimado'
+    };
+  }).filter(n => n.nav > 0);
+}
+
+// ── Main rebuild function ────────────────────────────────────────────────────
+async function rebuildHistoricalNav() {
+  const btn = document.getElementById('btn-rebuild');
+  const statusEl = document.getElementById('rebuild-status');
+  if (btn) { btn.disabled = true; btn.textContent = '⟳ Calculando…'; }
+  if (statusEl) { statusEl.textContent = 'Construyendo estados mensuales…'; statusEl.style.color = 'var(--text3)'; }
+
+  try {
+    const monthlyStates = buildMonthlyPortfolioStates();
+    if (statusEl) statusEl.textContent = `${monthlyStates.length} meses · obteniendo precios…`;
+
+    const { historicalPrices, historicalFX } = await fetchHistoricalPrices(monthlyStates, statusEl);
+    if (statusEl) statusEl.textContent = 'Calculando NAV mensual…';
+
+    const nav = computeNAV(monthlyStates, historicalPrices, historicalFX);
+    S.historicalNav = nav;
+    save();
+
+    const now = new Date().toLocaleTimeString('es-ES', {hour:'2-digit', minute:'2-digit'});
+    if (statusEl) { statusEl.textContent = `✓ ${nav.length} meses reconstruidos · ${now}`; statusEl.style.color = 'var(--green)'; }
+    toast(`NAV histórico calculado (${nav.length} meses)`);
+  } catch(e) {
+    if (statusEl) { statusEl.textContent = '✗ Error: ' + e.message; statusEl.style.color = 'var(--red)'; }
+    toast('Error al reconstruir histórico');
+  }
+
+  if (btn) { btn.disabled = false; btn.textContent = '↻ Reconstruir con precios reales'; }
+  renderHistorial();
+}
+
+// ── Render ────────────────────────────────────────────────────────────────────
 function renderHistorial() {
-  const hist = [...S.historial].sort((a,b)=>a.mes.localeCompare(b.mes));
-  const labels = hist.map(h=>fmtMes(h.mes));
-  const totales = hist.map(h=>sumHist(h));
-  const ahos = hist.map(h=>Object.values(h.cuentas||{}).reduce((a,b)=>a+b,0));
-  const invs = hist.map(h=>Object.values(h.inversiones||{}).reduce((a,b)=>a+b,0));
-  const mets = hist.map(h=>Object.values(h.metales||{}).reduce((a,b)=>a+b,0));
+  const nav = filterByRange(S.historicalNav || []);
+  const hasNav = nav.length > 0;
 
+  // Fallback to manual historial if no NAV yet
+  const hist = [...S.historial].sort((a,b) => a.mes.localeCompare(b.mes));
+
+  // KPIs
+  const latestNav = hasNav ? nav[nav.length-1] : null;
+  const firstNav  = hasNav ? nav[0] : null;
+  const totalAport = S.historial.reduce((a,h) => a+(h.aportacion||0), 0);
+  const gpEur = latestNav ? latestNav.nav - latestNav.invested : null;
+  const gpPct = (latestNav && latestNav.invested > 0) ? (latestNav.nav - latestNav.invested) / latestNav.invested * 100 : null;
+  const totalReturn = (firstNav && latestNav) ? (latestNav.nav - firstNav.nav) / firstNav.nav * 100 : null;
+
+  // Compute time-weighted return (approx)
+  let twrPct = null;
+  if (hasNav && nav.length > 1) {
+    let twr = 1;
+    for (let i = 1; i < nav.length; i++) {
+      const prevNav = nav[i-1].nav;
+      if (prevNav > 0) {
+        const cashFlow = (nav[i].invested - nav[i-1].invested); // deposit in this period
+        twr *= (nav[i].nav / (prevNav + cashFlow));
+      }
+    }
+    twrPct = (twr - 1) * 100;
+  }
+
+  document.getElementById('hist-kpis').innerHTML = [
+    { label: 'Valor actual',    value: latestNav ? fmt(latestNav.nav) : fmt(totalInversiones() + totalCuentas()), delta: latestNav ? `${fmtMes(latestNav.mes)}` : 'precio mercado', pos: true },
+    { label: 'Capital invertido', value: fmt(totalAport), delta: `${S.historial.length} depósitos`, pos: true },
+    { label: 'G/P total €',     value: gpEur != null ? fmt(gpEur) : '—', delta: gpPct != null ? fmtPct(gpPct) + ' simple' : '', pos: gpEur >= 0 },
+    { label: 'Rentabilidad TWR', value: twrPct != null ? fmtPct(twrPct) : '—', delta: hasNav ? 'ponderada por tiempo' : 'falta reconstruir', pos: twrPct >= 0 }
+  ].map(m => `<div class="metric"><div class="metric-label">${m.label}</div>
+    <div class="metric-value" style="color:${m.label.startsWith('G/P') || m.label.startsWith('Rent') ? (m.pos ? 'var(--green)' : 'var(--red)') : 'var(--text)'}">${m.value}</div>
+    <div class="metric-delta ${m.pos ? 'pos' : 'neg'}">${m.delta}</div></div>`).join('');
+
+  // Main chart
   destroyChart('chartHist');
-  charts['chartHist'] = new Chart(document.getElementById('chartHist'), {
-    type:'line', data:{labels, datasets:[{label:'Total',data:totales,borderColor:'#1A1916',backgroundColor:'rgba(26,25,22,0.05)',tension:0.3,fill:true,pointRadius:4,pointBackgroundColor:'#1A1916'}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>fmt(ctx.raw)}}},scales:{x:{ticks:{font:{size:11}}},y:{ticks:{callback:v=>fmt(v),font:{size:11}}}}}
-  });
+  if (hasNav) {
+    const labels = nav.map(n => fmtMes(n.mes));
+    charts['chartHist'] = new Chart(document.getElementById('chartHist'), {
+      type: 'line',
+      data: { labels, datasets: [
+        { label: 'Valor mercado', data: nav.map(n => n.nav), borderColor: '#1A1916', backgroundColor: 'rgba(26,25,22,0.06)', tension: 0.3, fill: true, pointRadius: 2, pointHoverRadius: 5 },
+        { label: 'Capital invertido', data: nav.map(n => n.invested), borderColor: '#3B6D11', backgroundColor: 'transparent', tension: 0.2, fill: false, borderDash: [5,4], pointRadius: 0 }
+      ]},
+      options: { responsive:true, maintainAspectRatio:false, interaction: { mode:'index', intersect:false },
+        plugins: { legend: { position:'top', labels:{ boxWidth:10, font:{size:11} } }, tooltip: { callbacks:{ label: ctx => ctx.dataset.label + ': ' + fmt(ctx.raw) } } },
+        scales: { x:{ ticks:{ font:{size:11}, maxTicksLimit:14 } }, y:{ ticks:{ callback: v => fmt(v), font:{size:11} } } } }
+    });
+  } else {
+    // Fallback: use manual historial with cost values
+    const totales = hist.map(h => sumHist(h));
+    let cumInv = 0;
+    const cumInvArr = hist.map(h => { cumInv += (h.aportacion||0); return cumInv; });
+    charts['chartHist'] = new Chart(document.getElementById('chartHist'), {
+      type:'line', data:{labels: hist.map(h=>fmtMes(h.mes)), datasets:[
+        {label:'Portfolio (coste)',data:totales,borderColor:'#1A1916',backgroundColor:'rgba(26,25,22,0.05)',tension:0.3,fill:true,pointRadius:3},
+        {label:'Capital invertido',data:cumInvArr,borderColor:'#3B6D11',backgroundColor:'transparent',tension:0.2,fill:false,borderDash:[5,4],pointRadius:0}
+      ]},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',labels:{boxWidth:10,font:{size:11}}},tooltip:{callbacks:{label:ctx=>ctx.dataset.label+': '+fmt(ctx.raw)}}},scales:{x:{ticks:{font:{size:11}}},y:{ticks:{callback:v=>fmt(v),font:{size:11}}}}}
+    });
+    // Show hint
+    const s = document.getElementById('rebuild-status');
+    if (s && !s.textContent) s.textContent = '⚠ Pulsa "Reconstruir" para ver precios reales de mercado';
+  }
 
+  // Monthly returns bar chart
+  destroyChart('chartHistMonthly');
+  if (hasNav && nav.length > 1) {
+    const mReturns = nav.slice(1).map((n, i) => {
+      const prev = nav[i].nav;
+      const flow = n.invested - nav[i].invested;
+      return prev > 0 ? parseFloat(((n.nav - prev - flow) / prev * 100).toFixed(2)) : 0;
+    });
+    charts['chartHistMonthly'] = new Chart(document.getElementById('chartHistMonthly'), {
+      type:'bar',
+      data:{ labels: nav.slice(1).map(n=>fmtMes(n.mes)), datasets:[{
+        data: mReturns,
+        backgroundColor: mReturns.map(r => r >= 0 ? 'rgba(45,106,45,0.7)' : 'rgba(163,45,45,0.7)'),
+        borderRadius: 3
+      }]},
+      options:{ responsive:true, maintainAspectRatio:false,
+        plugins:{ legend:{display:false}, tooltip:{callbacks:{label:ctx=>fmtPct(ctx.raw)}}},
+        scales:{ x:{ticks:{font:{size:9},maxTicksLimit:12}}, y:{ticks:{callback:v=>v+'%',font:{size:10}},grid:{color:'rgba(0,0,0,0.04)'}} } }
+    });
+  }
+
+  // Composition pie / latest period
   destroyChart('chartStack');
-  charts['chartStack'] = new Chart(document.getElementById('chartStack'), {
-    type:'bar', data:{labels, datasets:[
-      {label:'Ahorro',data:ahos,backgroundColor:'#3B6D11',stack:'s'},
-      {label:'Inversiones',data:invs,backgroundColor:'#0C3F7A',stack:'s'},
-      {label:'Metales',data:mets,backgroundColor:'#BA7517',stack:'s'}
-    ]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',labels:{boxWidth:10,font:{size:11}}},tooltip:{callbacks:{label:ctx=>ctx.dataset.label+': '+fmt(ctx.raw)}}},scales:{x:{ticks:{font:{size:11},autoSkip:false,maxRotation:45}},y:{ticks:{callback:v=>fmt(v),font:{size:11}},stacked:true}}}
-  });
+  if (hasNav) {
+    const last = S.historicalNav[S.historicalNav.length-1];
+    // Use current inversiones as composition proxy for last month
+    const palette = ['#0C3F7A','#1455A4','#1B6AC5','#3B8EE0','#63ADE8','#3B6D11','#5A9E1A','#7A4F0A','#BA7517','#A32D2D','#D45A5A'];
+    const topInv = [...S.inversiones].sort((a,b)=>b.valor-a.valor).slice(0,10);
+    charts['chartStack'] = new Chart(document.getElementById('chartStack'), {
+      type:'doughnut',
+      data:{ labels: topInv.map(i=>i.notas||i.nombre), datasets:[{ data: topInv.map(i=>i.valor), backgroundColor: topInv.map((_,idx)=>palette[idx%palette.length]), borderWidth:0 }]},
+      options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{position:'right',labels:{boxWidth:8,font:{size:9},padding:4}}, tooltip:{callbacks:{label:ctx=>' '+fmt(ctx.raw)+(totalInversiones()>0?' ('+Math.round(ctx.raw/totalInversiones()*100)+'%)':'')}}}, cutout:'50%' }
+    });
+  } else {
+    // Stacked bar fallback
+    const ahos = hist.map(h=>Object.values(h.cuentas||{}).reduce((a,b)=>a+b,0));
+    const invs = hist.map(h=>Object.values(h.inversiones||{}).reduce((a,b)=>a+b,0));
+    charts['chartStack'] = new Chart(document.getElementById('chartStack'), {
+      type:'bar', data:{labels:hist.map(h=>fmtMes(h.mes)), datasets:[
+        {label:'Efectivo',data:ahos,backgroundColor:'#3B6D11',stack:'s'},
+        {label:'Portfolio',data:invs,backgroundColor:'#0C3F7A',stack:'s'},
+      ]},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',labels:{boxWidth:10,font:{size:11}}}},scales:{x:{ticks:{font:{size:10},autoSkip:true,maxTicksLimit:12}},y:{ticks:{callback:v=>fmt(v),font:{size:11}},stacked:true}}}
+    });
+  }
 
-  document.getElementById('hist-rows').innerHTML = [...hist].reverse().map((h,i)=>{
-    const tot=sumHist(h), prev=i<hist.length-1?sumHist(hist[hist.length-2-i]):null;
-    const delta = prev!==null?tot-prev:null;
-    return `<tr>
-      <td class="mono">${fmtMes(h.mes)}</td>
-      <td class="mono">${fmt(Object.values(h.cuentas||{}).reduce((a,b)=>a+b,0))}</td>
-      <td class="mono">${fmt(Object.values(h.inversiones||{}).reduce((a,b)=>a+b,0))}</td>
-      <td class="mono">${fmt(Object.values(h.metales||{}).reduce((a,b)=>a+b,0))}</td>
-      <td class="mono" style="font-weight:500;">${fmt(tot)}</td>
-      <td class="mono ${(h.aportacion||0)>=0?'pos':'neg'}">${(h.aportacion||0)>=0?'+':''}${fmt(h.aportacion||0)}</td>
-      <td><button class="btn btn-sm btn-danger" onclick="deleteHist('${h.mes}')">✕</button></td>
-    </tr>`;
-  }).join('') || '<tr><td colspan="7" style="text-align:center;color:var(--text3);padding:24px;">Sin registros históricos</td></tr>';
+  // Table
+  const tableData = hasNav ? [...nav].reverse() : [...hist].reverse();
+  document.getElementById('hist-rows').innerHTML = tableData.map((row, i) => {
+    if (hasNav) {
+      const n = row;
+      const prev = i < tableData.length-1 ? tableData[i+1] : null;
+      const gpE = n.nav - n.invested;
+      const gpP = n.invested > 0 ? gpE/n.invested*100 : 0;
+      const monthly = prev && prev.nav > 0 ? (n.nav - prev.nav - (n.invested - prev.invested)) / prev.nav * 100 : null;
+      return `<tr>
+        <td class="mono">${fmtMes(n.mes)}</td>
+        <td class="mono" style="font-weight:500;">${fmt(n.nav)}</td>
+        <td class="mono" style="color:var(--text3);">${fmt(n.invested)}</td>
+        <td class="mono ${gpE>=0?'pos':'neg'}">${fmt(gpE)}</td>
+        <td class="mono"><span class="badge ${gpP>=0?'badge-green':'badge-red'}">${fmtPct(gpP)}</span></td>
+        <td class="mono">${n.invested > (prev?.invested||0) ? '+'+fmt(n.invested-(prev?.invested||0)) : '—'}</td>
+        <td><span class="badge ${n.source==='yahoo'?'badge-blue':'badge-amber'}">${n.source}</span></td>
+        <td><button class="btn btn-sm btn-danger" onclick="deleteNav('${n.mes}')">✕</button></td>
+      </tr>`;
+    } else {
+      const h = row;
+      const tot = sumHist(h);
+      return `<tr>
+        <td class="mono">${fmtMes(h.mes)}</td>
+        <td class="mono" style="font-weight:500;">${fmt(tot)}</td>
+        <td class="mono" style="color:var(--text3);">—</td>
+        <td class="mono" style="color:var(--text3);">—</td>
+        <td class="mono" style="color:var(--text3);">—</td>
+        <td class="mono ${(h.aportacion||0)>=0?'pos':'neg'}">${(h.aportacion||0)>=0?'+':''}${fmt(h.aportacion||0)}</td>
+        <td><span class="badge badge-amber">coste</span></td>
+        <td><button class="btn btn-sm btn-danger" onclick="deleteHist('${h.mes}')">✕</button></td>
+      </tr>`;
+    }
+  }).join('') || '<tr><td colspan="8" style="text-align:center;color:var(--text3);padding:24px;">Sin datos — pulsa "Reconstruir" para calcular</td></tr>';
 }
 
 function sumHist(h) {
-  return Object.values(h.cuentas||{}).reduce((a,b)=>a+b,0) + Object.values(h.inversiones||{}).reduce((a,b)=>a+b,0) + Object.values(h.metales||{}).reduce((a,b)=>a+b,0);
+  return Object.values(h.cuentas||{}).reduce((a,b)=>a+b,0)
+       + Object.values(h.inversiones||{}).reduce((a,b)=>a+b,0)
+       + Object.values(h.metales||{}).reduce((a,b)=>a+b,0);
 }
-
 function deleteHist(mes) {
-  if (!confirm('¿Eliminar registro de '+fmtMes(mes)+'?')) return;
+  if (!confirm('¿Eliminar registro manual de '+fmtMes(mes)+'?')) return;
   S.historial = S.historial.filter(h=>h.mes!==mes);
   save(); renderHistorial(); toast('Registro eliminado');
+}
+function deleteNav(mes) {
+  if (!confirm('¿Eliminar punto de NAV de '+fmtMes(mes)+'?')) return;
+  S.historicalNav = (S.historicalNav||[]).filter(n=>n.mes!==mes);
+  save(); renderHistorial(); toast('Punto eliminado');
 }
 
 // ─── INVERSIONES ─────────────────────────────────────────────────────────────
 function renderInversiones() {
-  const inv = S.inversiones, totInv = totalInversiones(), coste = totalCosteInv();
+  const inv = S.inversiones.sort((a,b)=>b.valor-a.valor);
+  const totInv = totalInversiones(), coste = totalCosteInv();
   const ganancia = totInv-coste, rentPct = coste>0?ganancia/coste*100:0;
   const divs = totalDividendos();
 
   document.getElementById('inv-metrics').innerHTML = [
-    {label:'Valor total',value:fmt(totInv),delta:''},
-    {label:'Coste total',value:fmt(coste),delta:''},
-    {label:'G/P',value:fmt(ganancia),delta:fmtPct(rentPct),pos:ganancia>=0},
-    {label:'Dividendos',value:fmt(divs),delta:'total recibido'}
+    {label:'Valor mercado',value:fmt(totInv),delta:'precio vivo',pos:true},
+    {label:'Coste IBKR',value:fmt(coste),delta:`${fmt(9784)} depositado total`},
+    {label:'G/P precio',value:fmt(ganancia),delta:fmtPct(rentPct)+' rentabilidad',pos:ganancia>=0},
+    {label:'Dividendos netos',value:fmt(divs),delta:'desde oct 2022',pos:true}
   ].map(m=>`<div class="metric"><div class="metric-label">${m.label}</div>
-    <div class="metric-value" style="color:${m.label==='G/P'?(ganancia>=0?'var(--green)':'var(--red)'):'var(--text)'}">${m.value}</div>
+    <div class="metric-value" style="color:${m.label==='G/P precio'?(ganancia>=0?'var(--green)':'var(--red)'):'var(--text)'}">${m.value}</div>
     <div class="metric-delta ${m.pos===true?'pos':m.pos===false?'neg':''}">${m.delta}</div></div>`).join('');
 
-  // pie
   destroyChart('chartInvPie');
   if (inv.length) {
+    const palette = ['#0C3F7A','#1455A4','#1B6AC5','#3B8EE0','#63ADE8','#3B6D11','#5A9E1A','#7A4F0A','#BA7517','#A32D2D'];
     charts['chartInvPie'] = new Chart(document.getElementById('chartInvPie'), {
       type:'doughnut',
-      data:{labels:inv.map(i=>i.nombre), datasets:[{data:inv.map(i=>i.valor), backgroundColor:['#0C3F7A','#185FA5','#378ADD','#85B7EB','#B5D4F4','#3B6D11','#639922','#7A4F0A'], borderWidth:0}]},
-      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{boxWidth:10,font:{size:10},padding:6}},tooltip:{callbacks:{label:ctx=>' '+fmt(ctx.raw)+' ('+Math.round(ctx.raw/totInv*100)+'%)'}}},cutout:'55%'}
+      data:{labels:inv.map(i=>i.notas), datasets:[{data:inv.map(i=>i.valor), backgroundColor:inv.map((_,idx)=>palette[idx%palette.length]), borderWidth:0}]},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{boxWidth:8,font:{size:9},padding:4}},tooltip:{callbacks:{label:ctx=>' '+fmt(ctx.raw)+' ('+Math.round(ctx.raw/totInv*100)+'%)'}}},cutout:'55%'}
     });
   }
 
-  // bar rentabilidad
   destroyChart('chartInvBar');
   if (inv.length) {
     const rents = inv.map(i=>i.coste>0?parseFloat(((i.valor-i.coste)/i.coste*100).toFixed(1)):0);
     charts['chartInvBar'] = new Chart(document.getElementById('chartInvBar'), {
       type:'bar',
-      data:{labels:inv.map(i=>i.nombre.length>14?i.nombre.slice(0,14)+'…':i.nombre), datasets:[{label:'%',data:rents, backgroundColor:rents.map(r=>r>=0?'rgba(45,106,45,0.7)':'rgba(163,45,45,0.7)')}]},
-      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>fmtPct(ctx.raw)}}},scales:{x:{ticks:{font:{size:10}}},y:{ticks:{callback:v=>v+'%',font:{size:10}}}}}
+      data:{labels:inv.map(i=>i.notas), datasets:[{label:'%',data:rents, backgroundColor:rents.map(r=>r>=0?'rgba(45,106,45,0.75)':'rgba(163,45,45,0.75)')}]},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>ctx.label+': '+fmtPct(ctx.raw)}}},scales:{x:{ticks:{font:{size:10}}},y:{ticks:{callback:v=>v+'%',font:{size:10}},grid:{color:'rgba(0,0,0,0.05)'}}}}
     });
   }
 
-  // historial inversiones (solo si hay datos)
   destroyChart('chartInvHist');
   const histInv = S.historial.filter(h=>Object.keys(h.inversiones||{}).length>0).sort((a,b)=>a.mes.localeCompare(b.mes));
   if (histInv.length > 1) {
+    // Cumulative deposits line
+    let cumDep = 0;
+    const cumDeps = histInv.map(h=>{ cumDep += (h.aportacion||0); return cumDep; });
     charts['chartInvHist'] = new Chart(document.getElementById('chartInvHist'), {
-      type:'line', data:{labels:histInv.map(h=>fmtMes(h.mes)), datasets:[{label:'Portfolio',data:histInv.map(h=>Object.values(h.inversiones||{}).reduce((a,b)=>a+b,0)),borderColor:'#0C3F7A',backgroundColor:'rgba(12,63,122,0.07)',tension:0.3,fill:true,pointRadius:3}]},
-      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>fmt(ctx.raw)}}},scales:{x:{ticks:{font:{size:11}}},y:{ticks:{callback:v=>fmt(v),font:{size:11}}}}}
+      type:'line',
+      data:{labels:histInv.map(h=>fmtMes(h.mes)), datasets:[
+        {label:'Aportado acumulado',data:cumDeps,borderColor:'rgba(90,158,26,0.7)',backgroundColor:'rgba(90,158,26,0.07)',tension:0.3,fill:true,pointRadius:3,borderDash:[4,3]},
+        {label:'Portfolio',data:histInv.map(h=>Object.values(h.inversiones||{}).reduce((a,b)=>a+b,0)),borderColor:'#0C3F7A',backgroundColor:'rgba(12,63,122,0.07)',tension:0.3,fill:true,pointRadius:3}
+      ]},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',labels:{boxWidth:10,font:{size:11}}},tooltip:{callbacks:{label:ctx=>ctx.dataset.label+': '+fmt(ctx.raw)}}},scales:{x:{ticks:{font:{size:11}}},y:{ticks:{callback:v=>fmt(v),font:{size:11}}}}}
     });
   }
 
-  // table
+  // Table — shows symbol, qty, live value, cost, G/P, dividends
   document.getElementById('inv-rows').innerHTML = inv.map(i=>{
     const gp = i.valor-i.coste, gpPct = i.coste>0?gp/i.coste*100:0;
+    const priceInfo = i._lastPrice ? `<br><span style="font-size:10px;color:var(--text3);font-family:var(--mono);">${fmtExact(i._lastPrice)} / acción</span>` : '';
     return `<tr>
-      <td>${i.nombre}${i.notas?`<br><span style="font-size:11px;color:var(--text3);font-family:var(--mono);">${i.notas}</span>`:''}}</td>
-      <td><span class="badge badge-blue">${i.tipo||'ETF'}</span></td>
-      <td class="mono">${fmt(i.valor)}</td>
-      <td class="mono">${fmt(i.coste)}</td>
+      <td>${i.nombre}</td>
+      <td class="mono" style="font-size:12px;color:var(--text2);">${i.notas||'—'}</td>
+      <td class="mono">${i.qty||'—'}</td>
+      <td class="mono">${fmt(i.valor)}${priceInfo}</td>
+      <td class="mono" style="color:var(--text3);">${fmt(i.coste)}</td>
       <td class="mono ${gp>=0?'pos':'neg'}">${fmt(gp)}</td>
-      <td class="mono ${gpPct>=0?'pos':'neg'}"><span class="badge ${gpPct>=0?'badge-green':'badge-red'}">${fmtPct(gpPct)}</span></td>
-      <td class="mono">${fmt(i.dividendos||0)}</td>
+      <td class="mono"><span class="badge ${gpPct>=0?'badge-green':'badge-red'}">${fmtPct(gpPct)}</span></td>
+      <td class="mono pos">${i.dividendos>0?fmt(i.dividendos):'—'}</td>
       <td><button class="btn btn-sm" onclick="editInv('${i.id}')">✎</button> <button class="btn btn-sm btn-danger" onclick="deleteInv('${i.id}')">✕</button></td>
     </tr>`;
-  }).join('') || '<tr><td colspan="8" style="text-align:center;color:var(--text3);padding:24px;">Sin inversiones. Añade una o importa un CSV.</td></tr>';
+  }).join('') || '<tr><td colspan="9" style="text-align:center;color:var(--text3);padding:24px;">Sin inversiones</td></tr>';
 }
 
 // ─── AHORRO ───────────────────────────────────────────────────────────────────
@@ -948,7 +1216,7 @@ function renderAhorro() {
       <td><span class="badge badge-green">${c.tipo||'Corriente'}</span></td>
       <td class="mono" style="font-weight:500;">${fmt(c.valor)}</td>
       <td><button class="btn btn-sm" onclick="editCuenta('${c.id}')">✎</button> <button class="btn btn-sm btn-danger" onclick="deleteCuenta('${c.id}')">✕</button></td>
-    </tr>`).join('') || '<tr><td colspan="5" style="text-align:center;color:var(--text3);padding:24px;">Sin cuentas registradas</td></tr>';
+    </tr>`).join('') || '<tr><td colspan="5" style="text-align:center;color:var(--text3);padding:24px;">Sin cuentas</td></tr>';
 }
 
 // ─── METALES ─────────────────────────────────────────────────────────────────
@@ -961,20 +1229,16 @@ function renderMetales() {
       <td class="mono">${fmt(m.precio)}</td>
       <td class="mono" style="font-weight:500;">${fmt(m.qty*m.precio)}</td>
       <td><button class="btn btn-sm" onclick="editMetal('${m.id}')">✎</button> <button class="btn btn-sm btn-danger" onclick="deleteMetal('${m.id}')">✕</button></td>
-    </tr>`).join('') || '<tr><td colspan="6" style="text-align:center;color:var(--text3);padding:24px;">Sin metales registrados</td></tr>';
+    </tr>`).join('') || '<tr><td colspan="6" style="text-align:center;color:var(--text3);padding:24px;">Sin metales</td></tr>';
 }
 
 // ─── METAS ────────────────────────────────────────────────────────────────────
 function renderMetas() {
   document.getElementById('metas-cards').innerHTML = S.metas.map(m=>{
     const pct = Math.min(Math.round(m.actual/m.objetivo*100),100);
-    const faltan = Math.max(m.objetivo-m.actual,0);
     return `<div class="card" style="margin-bottom:12px;">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;">
-        <div>
-          <div style="font-size:15px;font-weight:400;">${m.nombre}</div>
-          ${m.notas?`<div style="font-size:12px;color:var(--text3);">${m.notas}</div>`:''}
-        </div>
+        <div><div style="font-size:15px;">${m.nombre}</div>${m.notas?`<div style="font-size:12px;color:var(--text3);">${m.notas}</div>`:''}</div>
         <div style="text-align:right;">
           <span class="mono" style="font-size:18px;font-weight:300;">${fmt(m.actual)}</span>
           <span style="color:var(--text3);font-size:13px;"> / ${fmt(m.objetivo)}</span>
@@ -987,11 +1251,11 @@ function renderMetas() {
       <div class="progress" style="height:7px;margin-bottom:6px;"><div class="progress-fill" style="width:${pct}%;background:${pct>=100?'var(--green)':'#0C3F7A'};"></div></div>
       <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text3);font-family:var(--mono);">
         <span>${pct}% completado</span>
-        <span>${pct<100?'Faltan '+fmt(faltan):'¡Meta alcanzada!'}</span>
+        <span>${pct<100?'Faltan '+fmt(Math.max(m.objetivo-m.actual,0)):'¡Meta alcanzada!'}</span>
         ${m.fecha?`<span>Hasta ${fmtMes(m.fecha)}</span>`:''}
       </div>
     </div>`;
-  }).join('') || '<div class="empty"><div class="empty-icon">◎</div>Sin metas definidas. Añade una para hacer seguimiento.</div>';
+  }).join('') || '<div class="empty"><div class="empty-icon">◎</div>Sin metas definidas</div>';
 
   destroyChart('chartMetas');
   if (S.metas.length) {
@@ -1011,23 +1275,22 @@ function renderActualizar() {
   const now = new Date(); document.getElementById('upd-mes').value = now.toISOString().slice(0,7);
   const mkSection = (items, containerId, keyFn) => {
     const el = document.getElementById(containerId);
-    if (!items.length) { el.innerHTML = '<p style="font-size:13px;color:var(--text3);margin-bottom:8px;">Sin activos en esta categoría</p>'; return; }
+    if (!items.length) { el.innerHTML = '<p style="font-size:13px;color:var(--text3);margin-bottom:8px;">Sin activos</p>'; return; }
     el.innerHTML = items.map(it=>`
       <div class="edit-row" style="grid-template-columns:2fr 1fr; margin-bottom:10px;">
         <label class="form-label" style="margin-bottom:0;padding-top:9px;">${it.nombre}</label>
-        <input type="number" id="upd-${containerId}-${it.id}" value="${keyFn(it)}" placeholder="Valor €">
+        <input type="number" id="upd-${containerId}-${it.id}" value="${keyFn(it)}" placeholder="€">
       </div>`).join('');
   };
   mkSection(S.cuentas,'upd-cuentas',c=>c.valor);
   mkSection(S.inversiones,'upd-inv',i=>i.valor);
   mkSection(S.metales,'upd-metales',m=>m.qty*m.precio);
-  // metas
   const metasEl = document.getElementById('upd-metas');
-  if (!S.metas.length) { metasEl.innerHTML = '<p style="font-size:13px;color:var(--text3);margin-bottom:8px;">Sin metas definidas</p>'; }
+  if (!S.metas.length) { metasEl.innerHTML = '<p style="font-size:13px;color:var(--text3);margin-bottom:8px;">Sin metas</p>'; }
   else metasEl.innerHTML = S.metas.map(m=>`
     <div class="edit-row" style="grid-template-columns:2fr 1fr; margin-bottom:10px;">
       <label class="form-label" style="margin-bottom:0;padding-top:9px;">${m.nombre} (objetivo: ${fmt(m.objetivo)})</label>
-      <input type="number" id="upd-upd-metas-${m.id}" value="${m.actual}" placeholder="Actual €">
+      <input type="number" id="upd-upd-metas-${m.id}" value="${m.actual}" placeholder="€">
     </div>`).join('');
   document.getElementById('upd-aportacion').value = '';
 }
@@ -1036,16 +1299,14 @@ function saveUpdate() {
   const mes = document.getElementById('upd-mes').value;
   if (!mes) { toast('Selecciona un mes'); return; }
   const getVal = (prefix, id) => { const el = document.getElementById(`upd-${prefix}-${id}`); return el ? parseFloat(el.value)||0 : 0; };
-
   const cuentasSnap = {};
   S.cuentas.forEach(c => { const v = getVal('upd-cuentas',c.id); c.valor = v; cuentasSnap[c.id] = v; });
   const invSnap = {};
   S.inversiones.forEach(i => { const v = getVal('upd-inv',i.id); i.valor = v; invSnap[i.id] = v; });
   const metSnap = {};
-  S.metales.forEach(m => { const v = getVal('upd-metales',m.id); const precio = m.qty>0?v/m.qty:m.precio; m.precio = precio; metSnap[m.id] = v; });
+  S.metales.forEach(m => { const v = getVal('upd-metales',m.id); m.precio = m.qty>0?v/m.qty:m.precio; metSnap[m.id] = v; });
   S.metas.forEach(m => { const el = document.getElementById(`upd-upd-metas-${m.id}`); if(el) m.actual = parseFloat(el.value)||m.actual; });
   const aportacion = parseFloat(document.getElementById('upd-aportacion').value)||0;
-
   const idx = S.historial.findIndex(h=>h.mes===mes);
   const entry = {mes, cuentas:cuentasSnap, inversiones:invSnap, metales:metSnap, aportacion};
   if (idx>=0) S.historial[idx]=entry; else S.historial.push(entry);
@@ -1056,30 +1317,42 @@ function saveUpdate() {
 // ─── MODALS ───────────────────────────────────────────────────────────────────
 function openModal(id) { document.getElementById(id).classList.add('open'); }
 function closeModal(id) { document.getElementById(id).classList.remove('open'); }
-function openAddInvModal(id=null) { editInvId=id; const i = id?S.inversiones.find(x=>x.id===id):null; document.getElementById('ai-nom').value=i?.nombre||''; document.getElementById('ai-tipo').value=i?.tipo||'ETF'; document.getElementById('ai-val').value=i?.valor||''; document.getElementById('ai-cost').value=i?.coste||''; document.getElementById('ai-div').value=i?.dividendos||''; document.getElementById('ai-fecha').value=i?.fecha||''; document.getElementById('ai-notas').value=i?.notas||''; openModal('modal-add-inv'); }
-function openAddCuentaModal(id=null) { const c=id?S.cuentas.find(x=>x.id===id):null; document.getElementById('ac-nom').value=c?.nombre||''; document.getElementById('ac-banco').value=c?.banco||''; document.getElementById('ac-tipo').value=c?.tipo||'Corriente'; document.getElementById('ac-val').value=c?.valor||''; openModal('modal-add-cuenta'); editCuentaId=id; }
-function openAddMetalModal(id=null) { const m=id?S.metales.find(x=>x.id===id):null; document.getElementById('am-nom').value=m?.nombre||''; document.getElementById('am-tipo').value=m?.tipo||'Oro'; document.getElementById('am-qty').value=m?.qty||''; document.getElementById('am-precio').value=m?.precio||''; openModal('modal-add-metal'); editMetalId=id; }
-function openAddMetaModal(id=null) { const m=id?S.metas.find(x=>x.id===id):null; document.getElementById('amt-nom').value=m?.nombre||''; document.getElementById('amt-obj').value=m?.objetivo||''; document.getElementById('amt-act').value=m?.actual||''; document.getElementById('amt-fecha').value=m?.fecha||''; document.getElementById('amt-notas').value=m?.notas||''; openModal('modal-add-meta'); editMetaId=id; }
 
-let editCuentaId=null, editMetalId=null, editMetaId=null;
+function openAddInvModal(id=null) {
+  editInvId=id;
+  const i = id ? S.inversiones.find(x=>x.id===id) : null;
+  document.getElementById('modal-inv-title').textContent = id ? 'Editar inversión' : 'Añadir inversión';
+  document.getElementById('ai-nom').value=i?.nombre||'';
+  document.getElementById('ai-tipo').value=i?.tipo||'Acción';
+  document.getElementById('ai-val').value=i?.valor||'';
+  document.getElementById('ai-cost').value=i?.coste||'';
+  document.getElementById('ai-div').value=i?.dividendos||'';
+  document.getElementById('ai-fecha').value=i?.fecha||'';
+  document.getElementById('ai-notas').value=i?.notas||'';
+  document.getElementById('ai-qty').value=i?.qty||'';
+  openModal('modal-add-inv');
+}
+function openAddCuentaModal(id=null) { editCuentaId=id; const c=id?S.cuentas.find(x=>x.id===id):null; document.getElementById('ac-nom').value=c?.nombre||''; document.getElementById('ac-banco').value=c?.banco||''; document.getElementById('ac-tipo').value=c?.tipo||'Corriente'; document.getElementById('ac-val').value=c?.valor||''; openModal('modal-add-cuenta'); }
+function openAddMetalModal(id=null) { editMetalId=id; const m=id?S.metales.find(x=>x.id===id):null; document.getElementById('am-nom').value=m?.nombre||''; document.getElementById('am-tipo').value=m?.tipo||'Oro'; document.getElementById('am-qty').value=m?.qty||''; document.getElementById('am-precio').value=m?.precio||''; openModal('modal-add-metal'); }
+function openAddMetaModal(id=null) { editMetaId=id; const m=id?S.metas.find(x=>x.id===id):null; document.getElementById('amt-nom').value=m?.nombre||''; document.getElementById('amt-obj').value=m?.objetivo||''; document.getElementById('amt-act').value=m?.actual||''; document.getElementById('amt-fecha').value=m?.fecha||''; document.getElementById('amt-notas').value=m?.notas||''; openModal('modal-add-meta'); }
 
 function saveInv() {
   const nom=document.getElementById('ai-nom').value.trim(); if(!nom){toast('Introduce un nombre');return;}
-  const obj={id:editInvId||uid(),nombre:nom,tipo:document.getElementById('ai-tipo').value,valor:parseFloat(document.getElementById('ai-val').value)||0,coste:parseFloat(document.getElementById('ai-cost').value)||0,dividendos:parseFloat(document.getElementById('ai-div').value)||0,fecha:document.getElementById('ai-fecha').value,notas:document.getElementById('ai-notas').value};
+  const obj={id:editInvId||uid(),nombre:nom,tipo:document.getElementById('ai-tipo').value,valor:parseFloat(document.getElementById('ai-val').value)||0,coste:parseFloat(document.getElementById('ai-cost').value)||0,dividendos:parseFloat(document.getElementById('ai-div').value)||0,fecha:document.getElementById('ai-fecha').value,notas:document.getElementById('ai-notas').value,qty:parseFloat(document.getElementById('ai-qty').value)||1};
   if(editInvId){S.inversiones=S.inversiones.map(i=>i.id===editInvId?obj:i);}else S.inversiones.push(obj);
-  save(); closeModal('modal-add-inv'); renderInversiones(); toast(editInvId?'Inversión actualizada':'Inversión añadida'); editInvId=null;
+  save(); closeModal('modal-add-inv'); renderInversiones(); toast(editInvId?'Actualizado':'Inversión añadida'); editInvId=null;
 }
 function editInv(id){openAddInvModal(id);}
-function deleteInv(id){if(!confirm('¿Eliminar esta inversión?'))return;S.inversiones=S.inversiones.filter(i=>i.id!==id);save();renderInversiones();toast('Eliminado');}
+function deleteInv(id){if(!confirm('¿Eliminar?'))return;S.inversiones=S.inversiones.filter(i=>i.id!==id);save();renderInversiones();toast('Eliminado');}
 
 function saveCuenta() {
   const nom=document.getElementById('ac-nom').value.trim(); if(!nom){toast('Introduce un nombre');return;}
   const obj={id:editCuentaId||uid(),nombre:nom,banco:document.getElementById('ac-banco').value,tipo:document.getElementById('ac-tipo').value,valor:parseFloat(document.getElementById('ac-val').value)||0};
   if(editCuentaId){S.cuentas=S.cuentas.map(c=>c.id===editCuentaId?obj:c);}else S.cuentas.push(obj);
-  save();closeModal('modal-add-cuenta');renderAhorro();toast(editCuentaId?'Cuenta actualizada':'Cuenta añadida');editCuentaId=null;
+  save();closeModal('modal-add-cuenta');renderAhorro();toast(editCuentaId?'Actualizada':'Cuenta añadida');editCuentaId=null;
 }
 function editCuenta(id){openAddCuentaModal(id);}
-function deleteCuenta(id){if(!confirm('¿Eliminar esta cuenta?'))return;S.cuentas=S.cuentas.filter(c=>c.id!==id);save();renderAhorro();toast('Eliminado');}
+function deleteCuenta(id){if(!confirm('¿Eliminar?'))return;S.cuentas=S.cuentas.filter(c=>c.id!==id);save();renderAhorro();toast('Eliminado');}
 
 function saveMetal() {
   const nom=document.getElementById('am-nom').value.trim(); if(!nom){toast('Introduce un nombre');return;}
@@ -1097,342 +1370,138 @@ function saveMeta() {
   save();closeModal('modal-add-meta');renderMetas();toast(editMetaId?'Meta actualizada':'Meta añadida');editMetaId=null;
 }
 function editMeta(id){openAddMetaModal(id);}
-function deleteMeta(id){if(!confirm('¿Eliminar esta meta?'))return;S.metas=S.metas.filter(m=>m.id!==id);save();renderMetas();toast('Eliminado');}
+function deleteMeta(id){if(!confirm('¿Eliminar?'))return;S.metas=S.metas.filter(m=>m.id!==id);save();renderMetas();toast('Eliminado');}
 
-// ─── CSV / IBKR IMPORT ────────────────────────────────────────────────────────
-let ibkrParsed = null; // will hold {positions, deposits} after parsing
-
-function openCsvModal() { resetCsvModal(); openModal('modal-csv'); }
-function resetCsvModal() {
-  ibkrParsed = null;
-  ['csv-step-upload','csv-step-preview','csv-step-done'].forEach((id,i) => document.getElementById(id).style.display = i===0?'block':'none');
-  document.getElementById('csv-next-btn').style.display = 'none';
-  const fi = document.getElementById('csv-file-input'); if (fi) fi.value = '';
-}
-function csvDrag(e) { e.preventDefault(); document.getElementById('csv-drop').classList.add('drag'); }
-function csvDrop(e) { e.preventDefault(); document.getElementById('csv-drop').classList.remove('drag'); const f=e.dataTransfer.files[0]; if(f) parseCsvFile(f); }
-function csvLoad(e) { const f=e.target.files[0]; if(f) parseCsvFile(f); }
-
-function splitCsvLine(line, sep) {
-  const result=[]; let cur='', inQ=false;
-  for (let i=0; i<line.length; i++) {
-    const c=line[i];
-    if (c==='"') { inQ=!inQ; }
-    else if (c===sep && !inQ) { result.push(cur.trim()); cur=''; }
-    else cur+=c;
-  }
-  result.push(cur.trim());
-  return result.map(v=>v.replace(/^"|"$/g,'').trim());
-}
-
-function parseIBKRNum(v) {
-  if (!v || v==='-' || v==='') return 0;
-  let s = String(v).trim().replace(/[€$£¥\s]/g,'');
-  const neg = s.startsWith('(') && s.endsWith(')');
-  s = s.replace(/[()]/g,'');
-  // Scientific notation (IBKR uses it for tiny FX amounts)
-  if (/e/i.test(s)) return neg ? -Math.abs(parseFloat(s)||0) : (parseFloat(s)||0);
-  // Thousands comma: 1,234.56
-  if (s.includes(',') && s.includes('.')) {
-    if (s.lastIndexOf(',') > s.lastIndexOf('.')) s = s.replace(/\./g,'').replace(',','.');
-    else s = s.replace(/,/g,'');
-  } else if (s.includes(',') && !s.includes('.')) {
-    const parts = s.split(',');
-    s = (parts.length===2 && parts[1].length<=2) ? s.replace(',','.') : s.replace(/,/g,'');
-  }
-  const n = parseFloat(s) || 0;
-  return neg ? -Math.abs(n) : n;
-}
-
-function parseCsvFile(file) {
+// ─── CSV TRANSACTION IMPORT (populates S.txns for NAV reconstruction) ─────────
+// Extensible: any IBKR CSV with Transaction History format
+function importIBKRcsv(file) {
   const reader = new FileReader();
   reader.onload = e => {
     const text = e.target.result;
-    const allLines = text.split('\n').map(l=>l.trim()).filter(l=>l);
-    const sep = ','; // IBKR always uses comma
-
-    // Find the Transaction History header row
-    // It looks like: Transaction History,Header,Date,Account,Description,...
+    const lines = text.split('\n').map(l => l.trim()).filter(l => l);
     let headerRow = null, dataRows = [];
-    for (let i=0; i<allLines.length; i++) {
-      const cols = splitCsvLine(allLines[i], sep);
-      if (cols[0]==='Transaction History' && cols[1]==='Header') {
-        headerRow = cols.slice(2); // skip "Transaction History","Header" prefix
-        // Collect all Data rows that follow
-        for (let j=i+1; j<allLines.length; j++) {
-          const row = splitCsvLine(allLines[j], sep);
-          if (row[0]==='Transaction History' && row[1]==='Data') {
-            dataRows.push(row.slice(2)); // strip section + Data prefix
-          }
+
+    for (let i = 0; i < lines.length; i++) {
+      const cols = splitCsv(lines[i]);
+      if (cols[0] === 'Transaction History' && cols[1] === 'Header') {
+        headerRow = cols.slice(2);
+        for (let j = i+1; j < lines.length; j++) {
+          const row = splitCsv(lines[j]);
+          if (row[0] === 'Transaction History' && row[1] === 'Data') dataRows.push(row.slice(2));
         }
         break;
       }
     }
 
-    if (!headerRow || !dataRows.length) {
-      toast('No se encontró Transaction History en el CSV'); return;
-    }
+    if (!headerRow || !dataRows.length) { toast('CSV no reconocido'); return; }
 
-    // Map column names to indices (within the trimmed row, after removing the 2-col prefix)
     const hi = name => headerRow.indexOf(name);
     const iDate=hi('Date'), iDesc=hi('Description'), iType=hi('Transaction Type'),
           iSym=hi('Symbol'), iQty=hi('Quantity'), iPrice=hi('Price'),
-          iPriceCur=hi('Price Currency'), iGross=hi('Gross Amount ') !== -1 ? hi('Gross Amount ') : hi('Gross Amount'),
+          iPriceCur=hi('Price Currency'),
+          iGross=hi('Gross Amount ') !== -1 ? hi('Gross Amount ') : hi('Gross Amount'),
           iComm=hi('Commission'), iNet=hi('Net Amount');
 
-    // ── Process transactions ──────────────────────────────────────────────────
-    // positions: {symbol → {name, symbol, qty, totalCost, commissions, dividends, firstDate}}
-    const positions = {};
-    const deposits = []; // [{date, amount}]
-
+    const txns = [];
     dataRows.forEach(row => {
-      const type = row[iType]?.trim();
-      const sym  = row[iSym]?.trim();
-      const desc = row[iDesc]?.trim();
-      const date = row[iDate]?.trim();
-      const gross = parseIBKRNum(row[iGross]);
-      const comm  = parseIBKRNum(row[iComm]);
-      const net   = parseIBKRNum(row[iNet]);
-      const qty   = parseIBKRNum(row[iQty]);
-
-      if (type === 'Buy' && sym && sym !== '-') {
-        if (!positions[sym]) positions[sym] = {name:desc||sym, symbol:sym, qty:0, totalCost:0, commissions:0, dividends:0, firstDate:date};
-        positions[sym].qty += qty;
-        // Net amount is negative (outflow), so cost = abs(net)
-        positions[sym].totalCost += Math.abs(net);
-        positions[sym].commissions += Math.abs(comm);
-        if (!positions[sym].firstDate || date < positions[sym].firstDate) positions[sym].firstDate = date;
-      }
-
-      if (type === 'Sell' && sym && sym !== '-') {
-        if (positions[sym]) {
-          // Reduce qty; proportionally reduce cost basis
-          const sellQty = Math.abs(qty);
-          if (positions[sym].qty > 0) {
-            const avgCost = positions[sym].totalCost / positions[sym].qty;
-            positions[sym].totalCost -= avgCost * sellQty;
-            positions[sym].qty -= sellQty;
-          }
-        }
-      }
-
-      if (type === 'Dividend' && sym && sym !== '-') {
-        if (!positions[sym]) positions[sym] = {name:sym, symbol:sym, qty:0, totalCost:0, commissions:0, dividends:0, firstDate:date};
-        positions[sym].dividends += Math.abs(gross);
-      }
-
-      // Foreign Tax Withholding: subtract from dividends
-      if (type === 'Foreign Tax Withholding' && sym && sym !== '-') {
-        if (positions[sym]) positions[sym].dividends -= Math.abs(gross);
-      }
-
-      if (type === 'Payment in Lieu' && sym && sym !== '-') {
-        if (positions[sym]) positions[sym].dividends += Math.abs(gross);
-      }
-
-      if (type === 'Deposit' && net > 0) {
-        deposits.push({date, amount: net});
-      }
+      const g = idx => (idx >= 0 && idx < row.length) ? row[idx].trim() : '';
+      txns.push({
+        date: g(iDate), type: g(iType), symbol: g(iSym) === '-' ? null : g(iSym),
+        desc: g(iDesc), qty: parseIBKRNum(g(iQty)), price: parseIBKRNum(g(iPrice)),
+        priceCur: g(iPriceCur), gross: parseIBKRNum(g(iGross)),
+        comm: parseIBKRNum(g(iComm)), net: parseIBKRNum(g(iNet))
+      });
     });
 
-    // Filter out positions with 0 qty (fully sold) or no cost
-    const activePositions = Object.values(positions).filter(p => p.qty > 0.001 || p.totalCost > 0);
-
-    ibkrParsed = { positions: activePositions, deposits };
-
-    // Show preview skeleton immediately
-    document.getElementById('csv-step-upload').style.display = 'none';
-    document.getElementById('csv-step-preview').style.display = 'block';
-    document.getElementById('csv-preview-title').textContent = activePositions.length + ' posiciones detectadas · ' + deposits.length + ' depositos';
-    document.getElementById('csv-preview-sub').textContent = dataRows.length + ' transacciones procesadas · buscando precios de mercado...';
-    renderPositionsTable(activePositions);
-    document.getElementById('csv-next-btn').style.display = 'inline-flex';
-
-    // Fetch live prices in background
-    fetchYahooPrices(activePositions);
+    S.txns = txns;
+    // Also rebuild inversiones from txns
+    rebuildInversionesFromTxns(txns);
+    save();
+    toast(`✓ ${txns.length} transacciones importadas`);
+    // Auto-trigger NAV rebuild
+    showPage('historial');
+    setTimeout(() => rebuildHistoricalNav(), 300);
   };
   reader.readAsText(file, 'UTF-8');
 }
 
-function renderPositionsTable(positions) {
-  document.getElementById('csv-positions-preview').innerHTML =
-    '<table><thead><tr>' +
-    '<th>Simbolo</th><th>Nombre</th><th>Acciones</th>' +
-    '<th>Coste EUR</th><th>Dividendos EUR</th>' +
-    '<th>Precio actual</th><th>Valor mercado EUR</th>' +
-    '</tr></thead><tbody>' +
-    positions.map(function(p,i) {
-      return '<tr id="ibkr-row-' + i + '">' +
-        '<td class="mono">' + p.symbol + '</td>' +
-        '<td style="font-size:12px;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="' + p.name + '">' + p.name + '</td>' +
-        '<td class="mono">' + (p.qty % 1 === 0 ? p.qty : p.qty.toFixed(4)) + '</td>' +
-        '<td class="mono">' + fmt(p.totalCost) + '</td>' +
-        '<td class="mono pos">' + (p.dividends > 0 ? fmt(p.dividends) : '-') + '</td>' +
-        '<td><span id="ibkr-spinner-' + i + '" style="font-size:11px;color:var(--text3);">cargando...</span>' +
-        '<input type="number" id="ibkr-price-' + i + '" placeholder="-" style="display:none;width:86px;margin:0;padding:5px 7px;font-size:12px;" step="any" oninput="updateValorMercado(' + i + ',' + p.qty + ')"></td>' +
-        '<td class="mono" id="ibkr-valor-' + i + '" style="color:var(--text3);">-</td>' +
-        '</tr>';
-    }).join('') +
-    '</tbody></table>';
-}
-
-function updateValorMercado(i, qty) {
-  var v = parseFloat(document.getElementById('ibkr-price-' + i).value);
-  var el = document.getElementById('ibkr-valor-' + i);
-  if (el) el.textContent = (!isNaN(v) && v > 0) ? fmt(v * qty) : '-';
-}
-
-async function fetchYahooPrices(positions) {
-  // Fetch EUR FX rates first so we can convert non-EUR prices
-  var fxRates = { EUR: 1 };
-  var fxPairs = ['USDEUR=X', 'GBPEUR=X', 'DKKEUR=X', 'HKDEUR=X'];
-  await Promise.allSettled(fxPairs.map(async function(pair) {
-    try {
-      var r = await fetch('https://corsproxy.io/?' + encodeURIComponent('https://query2.finance.yahoo.com/v8/finance/chart/' + pair + '?interval=1d&range=1d'));
-      var d = await r.json();
-      var price = d && d.chart && d.chart.result && d.chart.result[0] && d.chart.result[0].meta && d.chart.result[0].meta.regularMarketPrice;
-      if (price) fxRates[pair.replace('EUR=X', '')] = price;
-    } catch(e) {}
-  }));
-
-  var fetched = 0;
-  await Promise.allSettled(positions.map(async function(p, i) {
-    var spinner = document.getElementById('ibkr-spinner-' + i);
-    var inp = document.getElementById('ibkr-price-' + i);
-    var valEl = document.getElementById('ibkr-valor-' + i);
-    try {
-      var r = await fetch('https://corsproxy.io/?' + encodeURIComponent('https://query2.finance.yahoo.com/v8/finance/chart/' + encodeURIComponent(p.symbol) + '?interval=1d&range=1d'));
-      var d = await r.json();
-      var meta = d && d.chart && d.chart.result && d.chart.result[0] && d.chart.result[0].meta;
-      if (!meta || !meta.regularMarketPrice) throw new Error('no price');
-      var rawPrice = meta.regularMarketPrice;
-      var currency = meta.currency || 'USD';
-      // GBp = peniques (bolsa de Londres) -> dividir entre 100 para obtener GBP
-      var priceEur;
-      if (currency === 'GBp') {
-        priceEur = parseFloat(((rawPrice / 100) * (fxRates['GBP'] || 0.85)).toFixed(4));
-      } else {
-        var cur = currency.toUpperCase();
-        var fxRate = fxRates[cur] !== undefined ? fxRates[cur] : (fxRates['USD'] || 0.92);
-        priceEur = parseFloat((rawPrice * fxRate).toFixed(4));
+function rebuildInversionesFromTxns(txns) {
+  const positions = {};
+  txns.forEach(t => {
+    const sym = t.symbol;
+    if (!sym) return;
+    if (t.type === 'Buy') {
+      if (!positions[sym]) positions[sym] = { qty:0, totalCost:0, dividends:0, firstDate:t.date, desc:t.desc };
+      positions[sym].qty += t.qty;
+      positions[sym].totalCost += Math.abs(t.net);
+      if (!positions[sym].firstDate || t.date < positions[sym].firstDate) positions[sym].firstDate = t.date;
+    } else if (t.type === 'Sell') {
+      if (positions[sym] && positions[sym].qty > 0) {
+        const avg = positions[sym].totalCost / positions[sym].qty;
+        positions[sym].totalCost -= avg * Math.abs(t.qty);
+        positions[sym].qty -= Math.abs(t.qty);
       }
-      var valorTotal = priceEur * p.qty;
-      if (spinner) spinner.style.display = 'none';
-      if (inp) {
-        inp.style.display = 'inline-block';
-        inp.value = priceEur;
-        inp.style.borderColor = 'var(--green)';
-      }
-      if (valEl) {
-        valEl.textContent = fmt(valorTotal);
-        valEl.style.color = 'var(--text)';
-      }
-      p._fetchedPrice = priceEur;
-      fetched++;
-    } catch(e) {
-      if (spinner) spinner.style.display = 'none';
-      if (inp) {
-        inp.style.display = 'inline-block';
-        inp.placeholder = 'manual';
-      }
-      if (valEl) valEl.style.color = 'var(--text3)';
+    } else if (t.type === 'Dividend') {
+      if (!positions[sym]) positions[sym] = { qty:0, totalCost:0, dividends:0, firstDate:t.date, desc:t.desc };
+      positions[sym].dividends += Math.abs(t.gross);
+    } else if (t.type === 'Foreign Tax Withholding') {
+      if (positions[sym]) positions[sym].dividends -= Math.abs(t.gross);
+    } else if (t.type === 'Payment in Lieu') {
+      if (positions[sym]) positions[sym].dividends += Math.abs(t.gross);
     }
-  }));
+  });
 
-  document.getElementById('csv-preview-sub').textContent =
-    positions.length + ' posiciones · ' + fetched + ' precios obtenidos de Yahoo Finance · ' +
-    (positions.length - fetched) + ' requieren precio manual';
-}
-
-function csvImport() {
-  if (!ibkrParsed) return;
-  const { positions, deposits } = ibkrParsed;
-  let added=0, updated=0;
-
-  positions.forEach((p, i) => {
-    const inputVal = parseFloat(document.getElementById('ibkr-price-'+i)?.value);
-    const valorMercado = !isNaN(inputVal) && inputVal > 0 ? inputVal : p.totalCost; // fallback to cost
-
-    const existing = S.inversiones.find(inv => inv.notas && inv.notas.startsWith(p.symbol));
+  // Merge into S.inversiones (update existing by notas=symbol, add new)
+  Object.entries(positions).forEach(([sym, p]) => {
+    if (p.qty < 0.001 && p.totalCost < 1) return;
+    const existing = S.inversiones.find(i => i.notas === sym);
+    const yahooSym = YAHOO_TICKER_MAP[sym] || sym;
     if (existing) {
-      existing.valor = valorMercado;
+      existing.qty = parseFloat(p.qty.toFixed(6));
       existing.coste = parseFloat(p.totalCost.toFixed(2));
       existing.dividendos = parseFloat(p.dividends.toFixed(2));
-      existing.nombre = p.name || existing.nombre;
-      updated++;
+      existing.fecha = p.firstDate || existing.fecha;
     } else {
       S.inversiones.push({
-        id: uid(),
-        nombre: p.name || p.symbol,
-        tipo: 'Acción',
-        valor: parseFloat(valorMercado.toFixed(2)),
+        id: Math.random().toString(36).slice(2,10),
+        nombre: p.desc || sym, tipo: 'Acción',
+        valor: parseFloat(p.totalCost.toFixed(2)),
         coste: parseFloat(p.totalCost.toFixed(2)),
         dividendos: parseFloat(p.dividends.toFixed(2)),
         fecha: p.firstDate || '',
-        notas: p.symbol
-      });
-      added++;
-    }
-  });
-
-  // Register deposits in historial grouped by month
-  deposits.forEach(d => {
-    const mes = d.date.slice(0,7); // YYYY-MM
-    const existing = S.historial.find(h=>h.mes===mes);
-    if (existing) {
-      existing.aportacion = (existing.aportacion||0) + d.amount;
-    } else {
-      // Snapshot current values for that month
-      S.historial.push({
-        mes,
-        cuentas: Object.fromEntries(S.cuentas.map(c=>[c.id,c.valor])),
-        inversiones: Object.fromEntries(S.inversiones.map(i=>[i.id,i.valor])),
-        metales: Object.fromEntries(S.metales.map(m=>[m.id,m.qty*m.precio])),
-        aportacion: d.amount
+        notas: sym, qty: parseFloat(p.qty.toFixed(6))
       });
     }
   });
-  S.historial.sort((a,b)=>a.mes.localeCompare(b.mes));
-
-  save();
-  document.getElementById('csv-step-preview').style.display='none';
-  document.getElementById('csv-step-done').style.display='block';
-  document.getElementById('csv-done-msg').textContent=`${added+updated} posiciones importadas`;
-  document.getElementById('csv-done-sub').textContent=`${added} nuevas · ${updated} actualizadas · ${deposits.length} depósitos en historial`;
-  document.getElementById('csv-next-btn').textContent='Ver inversiones';
-  document.getElementById('csv-next-btn').onclick=()=>{ closeModal('modal-csv'); resetCsvModal(); renderInversiones(); showPage('inversiones'); };
-  toast('IBKR importado correctamente');
 }
 
-// ─── ONBOARDING ───────────────────────────────────────────────────────────────
-const obTmp={cuentas:[],inversiones:[],metales:[],metas:[]};
-function obStep(n){for(let i=1;i<=4;i++)document.getElementById('ob-step-'+i).style.display=i===n?'block':'none';document.querySelectorAll('#ob-steps .step-dot').forEach((d,i)=>{d.className='step-dot'+(i<n-1?' done':i===n-1?' active':'');});}
-function obAddCuenta(){const n=document.getElementById('ob-c-nom').value.trim(),v=parseFloat(document.getElementById('ob-c-val').value);if(!n||isNaN(v))return;obTmp.cuentas.push({id:uid(),nombre:n,valor:v,tipo:'Corriente'});document.getElementById('ob-c-nom').value='';document.getElementById('ob-c-val').value='';obRender('ob-cuentas-list',obTmp.cuentas);}
-function obAddInv(){const n=document.getElementById('ob-i-nom').value.trim(),v=parseFloat(document.getElementById('ob-i-val').value),c=parseFloat(document.getElementById('ob-i-cost').value)||v;if(!n||isNaN(v))return;obTmp.inversiones.push({id:uid(),nombre:n,tipo:'ETF',valor:v,coste:c,dividendos:0});document.getElementById('ob-i-nom').value='';document.getElementById('ob-i-val').value='';document.getElementById('ob-i-cost').value='';obRender('ob-inv-list',obTmp.inversiones);}
-function obAddMetal(){const n=document.getElementById('ob-m-nom').value.trim(),v=parseFloat(document.getElementById('ob-m-val').value);if(!n||isNaN(v))return;obTmp.metales.push({id:uid(),nombre:n,tipo:'Oro',qty:1,precio:v});document.getElementById('ob-m-nom').value='';document.getElementById('ob-m-val').value='';obRender('ob-met-list',obTmp.metales);}
-function obAddMeta(){const n=document.getElementById('ob-mt-nom').value.trim(),o=parseFloat(document.getElementById('ob-mt-obj').value),a=parseFloat(document.getElementById('ob-mt-act').value)||0;if(!n||isNaN(o))return;obTmp.metas.push({id:uid(),nombre:n,objetivo:o,actual:a});document.getElementById('ob-mt-nom').value='';document.getElementById('ob-mt-obj').value='';document.getElementById('ob-mt-act').value='';obRender('ob-metas-list',obTmp.metas);}
-function obRender(elId,arr){document.getElementById(elId).innerHTML=arr.map((it,i)=>`<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:13px;"><span>${it.nombre}</span><span class="mono">${fmt(it.valor||it.precio*it.qty||it.objetivo)} <button class="del-btn" onclick="obDel('${elId}',${i})" style="background:none;border:none;cursor:pointer;color:var(--text3);font-size:15px;">×</button></span></div>`).join('');}
-function obDel(elId,i){const map={'.ob-cuentas-list':'cuentas','ob-cuentas-list':'cuentas','ob-inv-list':'inversiones','ob-met-list':'metales','ob-metas-list':'metas'};obTmp[map[elId]].splice(i,1);obRender(elId,obTmp[map[elId]]);}
-
-function obFinish(){
-  S.nombre=document.getElementById('ob-nombre').value.trim()||'Mi';
-  S.moneda=document.getElementById('ob-moneda').value;
-  S.cuentas=obTmp.cuentas;S.inversiones=obTmp.inversiones;S.metales=obTmp.metales;S.metas=obTmp.metas;
-  const mes=new Date().toISOString().slice(0,7);
-  S.historial=[{mes,cuentas:Object.fromEntries(S.cuentas.map(c=>[c.id,c.valor])),inversiones:Object.fromEntries(S.inversiones.map(i=>[i.id,i.valor])),metales:Object.fromEntries(S.metales.map(m=>[m.id,m.qty*m.precio])),aportacion:0}];
-  save();document.getElementById('onboarding').style.display='none';document.getElementById('app').style.display='flex';initApp();
+function splitCsv(line) {
+  const result = []; let cur = '', inQ = false;
+  for (const c of line) {
+    if (c === '"') inQ = !inQ;
+    else if (c === ',' && !inQ) { result.push(cur.trim().replace(/^"|"$/g,'')); cur = ''; }
+    else cur += c;
+  }
+  result.push(cur.trim().replace(/^"|"$/g,''));
+  return result;
 }
-
-// ─── EXPORT / IMPORT ─────────────────────────────────────────────────────────
+function parseIBKRNum(v) {
+  if (!v || v.trim() === '-' || v.trim() === '') return 0;
+  let s = v.trim().replace(/[€$£¥\s]/g,'');
+  const neg = s.startsWith('(') && s.endsWith(')');
+  s = s.replace(/[()]/g,'');
+  if (/e/i.test(s)) { const n = parseFloat(s)||0; return neg ? -Math.abs(n) : n; }
+  if (s.includes(',') && s.includes('.')) { s = s.lastIndexOf(',') > s.lastIndexOf('.') ? s.replace(/\./g,'').replace(',','.') : s.replace(/,/g,''); }
+  else if (s.includes(',') && !s.includes('.')) { const pts = s.split(','); s = pts.length===2 && pts[1].length<=2 ? s.replace(',','.') : s.replace(/,/g,''); }
+  const n = parseFloat(s)||0; return neg ? -Math.abs(n) : n;
+}
 function exportData(){const blob=new Blob([JSON.stringify(S,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='patrimonio_'+new Date().toISOString().slice(0,10)+'.json';a.click();toast('Datos exportados');}
 function triggerImport(){document.getElementById('import-file').click();}
-function importData(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{try{const d=JSON.parse(ev.target.result);S={...S,...d};save();initApp();toast('Datos importados correctamente');}catch{toast('Error al leer el archivo');}};r.readAsText(f);}
+function importData(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{try{const d=JSON.parse(ev.target.result);S={...S,...d};save();showPage('dashboard');toast('Datos importados');}catch{toast('Error al leer el archivo');}};r.readAsText(f);}
 
 // ─── UTILS ────────────────────────────────────────────────────────────────────
 function destroyChart(id){if(charts[id]){charts[id].destroy();delete charts[id];}}
 function toast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),2400);}
-
-// close modals clicking outside
 document.querySelectorAll('.modal-overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open');}));
 </script>
 </body>
