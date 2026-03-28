@@ -1,0 +1,100 @@
+name: Fetch historical prices
+
+on:
+  schedule:
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Extract tickers and fetch prices
+        run: |
+          python3 - << 'PYEOF'
+          import json, time, re
+          import urllib.request, urllib.parse
+
+          # 1. Extraer YAHOO_TICKER_MAP del HTML dinámicamente
+          with open("patrimonio.html", "r", encoding="utf-8") as f:
+            html = f.read()
+
+          match = re.search(r'const YAHOO_TICKER_MAP\s*=\s*(\{[^;]+?\})\s*;', html, re.DOTALL)
+          if not match:
+            print("ERROR: YAHOO_TICKER_MAP no encontrado en patrimonio.html")
+            exit(1)
+
+          raw = re.sub(r'//[^\n]*', '', match.group(1))  # quitar comentarios
+          ticker_map = json.loads(raw)
+          yahoo_symbols = list(set(ticker_map.values()))
+          print(f"Simbolos extraidos del HTML: {yahoo_symbols}")
+
+          FX_PAIRS = ["USDEUR=X", "GBPEUR=X", "DKKEUR=X", "HKDEUR=X", "NOKEUR=X"]
+          START = int(time.mktime(time.strptime("2022-01-01", "%Y-%m-%d")))
+          END   = int(time.time()) + 86400
+
+          def fetch_yahoo(ticker, retries=3):
+            url = (f"https://query2.finance.yahoo.com/v8/finance/chart/"
+                   f"{urllib.parse.quote(ticker)}"
+                   f"?interval=1mo&period1={START}&period2={END}")
+            for attempt in range(retries):
+              try:
+                req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+                with urllib.request.urlopen(req, timeout=20) as r:
+                  return json.loads(r.read())
+              except Exception as e:
+                if attempt == retries - 1: raise
+                time.sleep(1 + attempt)
+
+          prices = {}
+          for yahoo in sorted(yahoo_symbols):
+            try:
+              d = fetch_yahoo(yahoo)
+              res = d["chart"]["result"][0]
+              ts_list = res.get("timestamp", [])
+              closes = (res["indicators"].get("adjclose", [{}])[0].get("adjclose")
+                        or res["indicators"]["quote"][0].get("close", []))
+              currency = res["meta"].get("currency", "USD")
+              by_mes = {}
+              for ts, c in zip(ts_list, closes):
+                if c is not None:
+                  by_mes[time.strftime("%Y-%m", time.gmtime(ts))] = {"price": round(c,6), "currency": currency}
+              prices[yahoo] = by_mes
+              print(f"  OK {yahoo}: {len(by_mes)} meses ({currency})")
+            except Exception as e:
+              print(f"  FAIL {yahoo}: {e}")
+            time.sleep(0.4)
+
+          fx = {}
+          for pair in FX_PAIRS:
+            try:
+              d = fetch_yahoo(pair)
+              res = d["chart"]["result"][0]
+              ts_list = res.get("timestamp", [])
+              closes = (res["indicators"].get("adjclose", [{}])[0].get("adjclose")
+                        or res["indicators"]["quote"][0].get("close", []))
+              fx[pair] = {time.strftime("%Y-%m", time.gmtime(ts)): round(c,6)
+                          for ts, c in zip(ts_list, closes) if c is not None}
+              print(f"  OK FX {pair}: {len(fx[pair])} meses")
+            except Exception as e:
+              print(f"  FAIL FX {pair}: {e}")
+            time.sleep(0.4)
+
+          with open("prices.json", "w") as f:
+            json.dump({"generated": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+                       "symbols": yahoo_symbols, "prices": prices, "fx": fx},
+                      f, separators=(",", ":"))
+          print(f"Guardado prices.json: {len(prices)} simbolos, {sum(len(v) for v in prices.values())} puntos")
+          PYEOF
+
+      - name: Commit prices.json
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add prices.json
+          git diff --staged --quiet && echo "Sin cambios" || (git commit -m "chore: update prices.json [skip ci]" && git push)
