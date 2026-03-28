@@ -276,7 +276,7 @@
       <!-- Table -->
       <div class="card">
         <div class="section-header"><span class="section-title">Detalle mensual</span></div>
-        <table><thead><tr><th>Mes</th><th>Valor mercado</th><th>Capital inv.</th><th>G/P €</th><th>G/P %</th><th>Aportación</th><th>Fuente</th><th></th></tr></thead>
+        <table><thead><tr><th>Mes</th><th>Valor mercado</th><th>Coste posic.</th><th>Total dep.</th><th>G/P €</th><th>G/P %</th><th>Aportación</th><th>Fuente</th><th></th></tr></thead>
         <tbody id="hist-rows"></tbody></table>
       </div>
     </div>
@@ -944,7 +944,8 @@ function computeNAV(monthlyStates, historicalPrices, historicalFX) {
       nav: parseFloat(nav.toFixed(2)),
       navPortfolio: parseFloat(navPortfolio.toFixed(2)),
       navCash: parseFloat(navCash.toFixed(2)),
-      invested: state.cumDeposited,
+      invested: parseFloat((state.cumSpent || 0).toFixed(2)),
+      deposited: state.cumDeposited,
       coverage: total > 0 ? Math.round(covered/total*100) : 0,
       source: covered > 0 ? 'yahoo' : 'estimado'
     };
@@ -1030,7 +1031,8 @@ function renderHistorial() {
         { label: 'Valor total', data: nav.map(n => n.nav), borderColor: '#1A1916', backgroundColor: 'rgba(26,25,22,0.05)', tension: 0.3, fill: true, pointRadius: 2, pointHoverRadius: 5, borderWidth: 2 },
         { label: 'Portfolio acciones', data: nav.map(n => n.navPortfolio), borderColor: '#0C3F7A', backgroundColor: 'transparent', tension: 0.3, fill: false, pointRadius: 0, borderWidth: 1.5 },
         { label: 'Efectivo IBKR', data: nav.map(n => n.navCash != null ? n.navCash : null), borderColor: '#3B6D11', backgroundColor: 'transparent', tension: 0.2, fill: false, borderDash: [4,3], pointRadius: 0, borderWidth: 1.5 },
-        { label: 'Capital invertido', data: nav.map(n => n.invested), borderColor: '#A09F9B', backgroundColor: 'transparent', tension: 0.2, fill: false, borderDash: [2,4], pointRadius: 0, borderWidth: 1 }
+        { label: 'Coste posiciones', data: nav.map(n => n.invested), borderColor: '#A09F9B', backgroundColor: 'transparent', tension: 0.2, fill: false, borderDash: [2,4], pointRadius: 0, borderWidth: 1 },
+        { label: 'Total depositado', data: nav.map(n => n.deposited||n.invested), borderColor: 'rgba(59,109,17,0.7)', backgroundColor: 'transparent', tension: 0.2, fill: false, borderDash: [5,3], pointRadius: 0, borderWidth: 1.2 }
       ]},
       options: { responsive:true, maintainAspectRatio:false, interaction: { mode:'index', intersect:false },
         plugins: { legend: { position:'top', labels:{ boxWidth:10, font:{size:11} } }, tooltip: { callbacks:{ label: ctx => ctx.dataset.label + ': ' + fmt(ctx.raw) } } },
@@ -1112,6 +1114,7 @@ function renderHistorial() {
         <td class="mono">${fmtMes(n.mes)}</td>
         <td class="mono" style="font-weight:500;">${fmt(n.nav)}</td>
         <td class="mono" style="color:var(--text3);">${fmt(n.invested)}</td>
+        <td class="mono" style="color:var(--text3);">${fmt(n.deposited||n.invested)}</td>
         <td class="mono ${gpE>=0?'pos':'neg'}">${fmt(gpE)}</td>
         <td class="mono"><span class="badge ${gpP>=0?'badge-green':'badge-red'}">${fmtPct(gpP)}</span></td>
         <td class="mono pos">${n.invested > (prev?.invested||0) ? '+'+fmt(n.invested-(prev?.invested||0)) : '—'}</td>
@@ -1194,8 +1197,8 @@ function renderInversiones() {
     charts['chartInvHist'] = new Chart(document.getElementById('chartInvHist'), {
       type:'line',
       data:{labels:navData.map(n=>fmtMes(n.mes)), datasets:[
-        {label:'Capital invertido',data:navData.map(n=>n.invested),borderColor:'rgba(59,109,17,0.9)',backgroundColor:'rgba(59,109,17,0.08)',tension:0.2,fill:true,pointRadius:0,borderDash:[5,4],borderWidth:1.5},
-        {label:'Valor mercado (acciones)',data:navData.map(n=>n.navPortfolio),borderColor:'#0C3F7A',backgroundColor:'rgba(12,63,122,0.12)',tension:0.3,fill:true,pointRadius:2,borderWidth:2}
+        {label:'Coste de posiciones',data:navData.map(n=>n.invested),borderColor:'rgba(59,109,17,0.9)',backgroundColor:'rgba(59,109,17,0.08)',tension:0.2,fill:true,pointRadius:0,borderDash:[5,4],borderWidth:1.5},
+        {label:'Valor mercado',data:navData.map(n=>n.navPortfolio),borderColor:'#0C3F7A',backgroundColor:'rgba(12,63,122,0.12)',tension:0.3,fill:true,pointRadius:2,borderWidth:2}
       ]},
       options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{position:'top',labels:{boxWidth:10,font:{size:11}}},tooltip:{callbacks:{label:ctx=>ctx.dataset.label+': '+fmt(ctx.raw)}}},scales:{x:{ticks:{font:{size:11},maxTicksLimit:12}},y:{min:0,ticks:{callback:v=>fmt(v),font:{size:11}}}}}
     });
