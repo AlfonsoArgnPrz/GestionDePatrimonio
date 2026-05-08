@@ -689,13 +689,42 @@ function buildMonthlyPortfolioStates() {
   const firstDate=txns[0]?.date?.slice(0,7)||'2022-10';const nowMes=new Date().toISOString().slice(0,7);
   const months=[];let cur=firstDate;
   while(cur<=nowMes){months.push(cur);const[y,m]=cur.split('-').map(Number);const next=m===12?`${y+1}-01`:`${y}-${String(m+1).padStart(2,'0')}`;cur=next;}
-  let txnIdx=0;
+  let txnIdx=0, cumSpent=0;
   for(const mes of months){
     const monthEndReal=new Date(parseInt(mes.slice(0,4)),parseInt(mes.slice(5,7)),0).toISOString().slice(0,10);
-    while(txnIdx<txns.length&&txns[txnIdx].date<=monthEndReal){const t=txns[txnIdx++];const sym=t.symbol;if(!sym||sym==='-')continue;if(t.type==='Buy'){if(!positions[sym])positions[sym]={qty:0,totalCost:0};positions[sym].qty+=t.qty;positions[sym].totalCost+=Math.abs(t.net);}else if(t.type==='Sell'){if(positions[sym]&&positions[sym].qty>0){const avgCost=positions[sym].totalCost/positions[sym].qty;positions[sym].totalCost-=avgCost*Math.abs(t.qty);positions[sym].qty-=Math.abs(t.qty);}}else if(t.type==='Deposit'){cumDeposited+=Math.abs(t.net);}}
-    const snap={};for(const[sym,p]of Object.entries(positions)){if(p.qty>0.001)snap[sym]={qty:parseFloat(p.qty.toFixed(6)),yahooSym:YAHOO_TICKER_MAP[sym]||sym};}
-    const cumSpent=Object.values(positions).filter(p=>p.qty>0.001).reduce((a,p)=>a+p.totalCost,0);
-    results.push({mes,positions:snap,cumDeposited,cumSpent});
+    while(txnIdx<txns.length&&txns[txnIdx].date<=monthEndReal){
+      const t=txns[txnIdx++];const sym=t.symbol;
+      if(!sym||sym==='-'){
+        if(t.type==='Deposit')cumDeposited+=Math.abs(t.net);
+        continue;
+      }
+      if(t.type==='Buy'){
+        if(!positions[sym])positions[sym]={qty:0,totalCost:0};
+        positions[sym].qty+=t.qty;
+        positions[sym].totalCost+=Math.abs(t.net);
+        cumSpent+=Math.abs(t.net);
+      }else if(t.type==='Sell'){
+        if(positions[sym]&&positions[sym].qty>0){
+          const sellQty=Math.min(Math.abs(t.qty),positions[sym].qty);
+          const avgCost=positions[sym].totalCost/positions[sym].qty;
+          positions[sym].totalCost-=avgCost*sellQty;
+          positions[sym].qty-=sellQty;
+        }
+      }else if(t.type==='Deposit'){
+        cumDeposited+=Math.abs(t.net);
+      }
+    }
+    const snap={};
+    for(const[sym,p]of Object.entries(positions)){
+      if(p.qty>0.001){
+        // Busca el símbolo Yahoo: primero en YAHOO_TICKER_MAP, luego en S.inversiones por notas
+        const yahooSym=YAHOO_TICKER_MAP[sym]||(S.inversiones.find(i=>i.notas===sym)?.notas)||sym;
+        snap[sym]={qty:parseFloat(p.qty.toFixed(6)),yahooSym};
+      }
+    }
+    // cumSpent = total dinero gastado en compras (capital empleado)
+    // Si no hay depósitos registrados, usa cumSpent como proxy
+    results.push({mes,positions:snap,cumDeposited:cumDeposited||cumSpent,cumSpent});
   }
   return results;
 }
@@ -1094,7 +1123,86 @@ function deleteMeta(id){if(!confirm('¿Eliminar?'))return;S.metas=S.metas.filter
 function splitCsv(line){const result=[];let cur='',inQ=false;for(const c of line){if(c==='"')inQ=!inQ;else if(c===','&&!inQ){result.push(cur.trim().replace(/^"|"$/g,''));cur='';}else cur+=c;}result.push(cur.trim().replace(/^"|"$/g,''));return result;}
 function parseNum(v){if(!v||v.trim()==='-'||v.trim()==='')return 0;let s=v.trim().replace(/[€$£¥\s]/g,'');const neg=s.startsWith('(')&&s.endsWith(')');s=s.replace(/[()]/g,'');if(/e/i.test(s)){const n=parseFloat(s)||0;return neg?-Math.abs(n):n;}if(s.includes(',')&&s.includes('.')){s=s.lastIndexOf(',')>s.lastIndexOf('.')?s.replace(/\./g,'').replace(',','.'):s.replace(/,/g,'');}else if(s.includes(',')&&!s.includes('.')){const pts=s.split(',');s=pts.length===2&&pts[1].length<=2?s.replace(',','.'):s.replace(/,/g,'');}const n=parseFloat(s)||0;return neg?-Math.abs(n):n;}
 
-function parseIBKRtext(text){const lines=text.split('\n').map(l=>l.trim()).filter(l=>l);let headerRow=null,dataRows=[];for(let i=0;i<lines.length;i++){const cols=splitCsv(lines[i]);if(cols[0]==='Transaction History'&&cols[1]==='Header'){headerRow=cols.slice(2);for(let j=i+1;j<lines.length;j++){const row=splitCsv(lines[j]);if(row[0]==='Transaction History'&&row[1]==='Data')dataRows.push(row.slice(2));}break;}}if(!headerRow||!dataRows.length)return null;const hi=name=>headerRow.indexOf(name);const iDate=hi('Date'),iDesc=hi('Description'),iType=hi('Transaction Type'),iSym=hi('Symbol'),iQty=hi('Quantity'),iPrice=hi('Price'),iPriceCur=hi('Price Currency'),iGross=hi('Gross Amount ')!==-1?hi('Gross Amount '):hi('Gross Amount'),iComm=hi('Commission'),iNet=hi('Net Amount');const txns=[];dataRows.forEach(row=>{const g=idx=>(idx>=0&&idx<row.length)?row[idx].trim():'';txns.push({date:g(iDate),type:g(iType),symbol:g(iSym)==='-'?null:g(iSym),desc:g(iDesc),qty:parseNum(g(iQty)),price:parseNum(g(iPrice)),priceCur:g(iPriceCur),gross:parseNum(g(iGross)),comm:parseNum(g(iComm)),net:parseNum(g(iNet))});});return txns;}
+function normalizeIBKRDate(s){
+  if(!s)return '';
+  // "2024-01-15, 10:30:00" or "2024-01-15 10:30:00" → "2024-01-15"
+  s=s.trim().replace(/["]/g,'');
+  const m=s.match(/^(\d{4}-\d{2}-\d{2})/);if(m)return m[1];
+  // "01/15/2024" → "2024-01-15"
+  const m2=s.match(/^(\d{2})\/(\d{2})\/(\d{4})/);if(m2)return`${m2[3]}-${m2[1]}-${m2[2]}`;
+  return s.slice(0,10);
+}
+
+function parseIBKRtext(text){
+  const lines=text.split('\n').map(l=>l.trim()).filter(l=>l);
+  const txns=[];
+
+  // ── Formato 1: Flex Query (Transaction History) ──────────────────────────
+  let headerRow=null,dataRows=[];
+  for(let i=0;i<lines.length;i++){
+    const cols=splitCsv(lines[i]);
+    if(cols[0]==='Transaction History'&&cols[1]==='Header'){
+      headerRow=cols.slice(2);
+      for(let j=i+1;j<lines.length;j++){const row=splitCsv(lines[j]);if(row[0]==='Transaction History'&&row[1]==='Data')dataRows.push(row.slice(2));}
+      break;
+    }
+  }
+  if(headerRow&&dataRows.length){
+    const hi=name=>headerRow.indexOf(name);
+    const iDate=hi('Date'),iDesc=hi('Description'),iType=hi('Transaction Type'),iSym=hi('Symbol'),
+          iQty=hi('Quantity'),iPrice=hi('Price'),iPriceCur=hi('Price Currency'),
+          iGross=hi('Gross Amount ')!==-1?hi('Gross Amount '):hi('Gross Amount'),
+          iComm=hi('Commission'),iNet=hi('Net Amount');
+    dataRows.forEach(row=>{
+      const g=idx=>(idx>=0&&idx<row.length)?row[idx].trim():'';
+      txns.push({date:normalizeIBKRDate(g(iDate)),type:g(iType),symbol:g(iSym)==='-'?null:g(iSym),
+        desc:g(iDesc),qty:Math.abs(parseNum(g(iQty))),price:parseNum(g(iPrice)),
+        priceCur:g(iPriceCur),gross:parseNum(g(iGross)),comm:parseNum(g(iComm)),net:Math.abs(parseNum(g(iNet)))});
+    });
+    return txns.length?txns:null;
+  }
+
+  // ── Formato 2: Activity Statement (secciones Trades + Deposits) ───────────
+  let tradesHdr=null,depositsHdr=null;
+  for(const line of lines){
+    const cols=splitCsv(line);if(cols.length<3)continue;
+    const sec=cols[0],rtype=cols[1],row=cols.slice(2);
+    const g=hdr=>{ const idx=hdr.indexOf(sec==='Trades'?sec:sec); // unused, use closure below
+      return name=>{const i=hdr.indexOf(name);return(i>=0&&i<row.length)?row[i].trim():'';};
+    };
+
+    if(sec==='Trades'){
+      if(rtype==='Header'){tradesHdr=row;continue;}
+      if(rtype!=='Data'||!tradesHdr)continue;
+      const get=name=>{const i=tradesHdr.indexOf(name);return(i>=0&&i<row.length)?row[i].trim():'';};
+      const sym=get('Symbol');if(!sym||sym==='Symbol'||sym==='')continue;
+      // Saltar opciones y futuros
+      const cat=(get('Asset Category')||get('Asset Class')||'').toLowerCase();
+      if(cat.includes('option')||cat.includes('future')||cat.includes('bond'))continue;
+      const rawDate=get('Date/Time')||get('TradeDate')||get('Date');
+      const date=normalizeIBKRDate(rawDate);if(!date)continue;
+      const rawQty=parseNum(get('Quantity'));if(rawQty===0)continue;
+      const type=rawQty>0?'Buy':'Sell';
+      const price=parseNum(get('T. Price')||get('Price'));
+      const currency=get('Currency')||'USD';
+      const comm=parseNum(get('Comm/Fee')||get('Commission/Fee')||get('Commission'));
+      const proceeds=parseNum(get('Proceeds'));
+      const net=Math.abs(proceeds)+comm; // comm es negativo en IBKR
+      txns.push({date,type,symbol:sym,desc:sym,qty:Math.abs(rawQty),price,priceCur:currency,gross:Math.abs(proceeds),comm,net:Math.abs(net)});
+    }
+
+    if(sec==='Deposits & Withdrawals'){
+      if(rtype==='Header'){depositsHdr=row;continue;}
+      if(rtype!=='Data'||!depositsHdr)continue;
+      const get=name=>{const i=depositsHdr.indexOf(name);return(i>=0&&i<row.length)?row[i].trim():'';};
+      const rawDate=get('Settle Date')||get('Date');
+      const date=normalizeIBKRDate(rawDate);if(!date)continue;
+      const amount=parseNum(get('Amount'));
+      if(amount>0)txns.push({date,type:'Deposit',symbol:null,desc:'Deposit',qty:0,price:0,priceCur:'USD',gross:amount,comm:0,net:amount});
+    }
+  }
+  return txns.length?txns:null;
+}
 
 function importIBKRmulti(files){
   if(!files||!files.length)return;
