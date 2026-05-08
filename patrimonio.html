@@ -719,7 +719,7 @@ function buildMonthlyPortfolioStates() {
       if(p.qty>0.001){
         // Busca el símbolo Yahoo: primero en YAHOO_TICKER_MAP, luego en S.inversiones por notas
         const yahooSym=YAHOO_TICKER_MAP[sym]||(S.inversiones.find(i=>i.notas===sym)?.notas)||sym;
-        snap[sym]={qty:parseFloat(p.qty.toFixed(6)),yahooSym};
+        snap[sym]={qty:parseFloat(p.qty.toFixed(6)),yahooSym,totalCost:parseFloat((p.totalCost||0).toFixed(2))};
       }
     }
     // cumSpent = total dinero gastado en compras (capital empleado)
@@ -806,9 +806,19 @@ async function rebuildHistoricalNav() {
           nav.push({mes:state.mes,nav:parseFloat((portfolioVal+cashVal).toFixed(2)),navPortfolio:parseFloat(portfolioVal.toFixed(2)),navCash:parseFloat(cashVal.toFixed(2)),invested:parseFloat((state.cumSpent||0).toFixed(2)),deposited:parseFloat((state.cumDeposited||0).toFixed(2)),coverage:total>0?Math.round(covered/total*100):0,source:covered>0?'yahoo':'estimado'});
         }
       }
-      S.historicalNav=nav.filter(n=>n.nav>0);save();
-      if(statusEl){statusEl.textContent=`✓ ${nav.length} meses · transacciones IBKR · ${done}/${allSyms.size} símbolos`;statusEl.style.color='var(--green)';}
-      toast(`Histórico preciso: ${nav.length} meses`);
+      S.historicalNav=nav.filter(n=>n.nav>0);
+      // Sincronizar coste de posiciones abiertas con datos de transacciones
+      const finalPos=monthlyStates[monthlyStates.length-1]?.positions||{};
+      let costUpdated=0;
+      for(const inv of S.inversiones){
+        const sym=inv.notas;
+        if(sym&&finalPos[sym]&&finalPos[sym].totalCost>0){
+          inv.coste=finalPos[sym].totalCost;costUpdated++;
+        }
+      }
+      save();
+      if(statusEl){statusEl.textContent=`✓ ${nav.length} meses · transacciones IBKR · ${done}/${allSyms.size} símbolos${costUpdated>0?' · '+costUpdated+' costes actualizados':''}`;statusEl.style.color='var(--green)';}
+      toast(`Histórico preciso: ${nav.length} meses${costUpdated>0?' · costes sincronizados':''}`);
 
     }else{
       // ── MODO SIMPLE: cantidades actuales para todo el período ──
@@ -872,12 +882,12 @@ function renderHistorial() {
   if(hasNav&&nav.length>1){let twr=1;for(let i=1;i<nav.length;i++){const prevNav=nav[i-1].nav;if(prevNav>0){const cf=(nav[i].invested-nav[i-1].invested);twr*=nav[i].nav/(prevNav+cf);}}twrPct=(twr-1)*100;}
   document.getElementById('hist-kpis').innerHTML=[
     {label:'Valor actual',value:latestNav?fmt(latestNav.nav):fmt(totalInversiones()+totalCuentas()),delta:latestNav?fmtMes(latestNav.mes):'precio mercado',pos:true},
-    {label:'Capital invertido',value:fmt(totalAport),delta:`${S.historial.length} depósitos`,pos:true},
+    {label:'Capital invertido',value:hasNav?fmt(latestNav.invested):fmt(totalAport),delta:hasNav?'coste compras IBKR':`${S.historial.length} aportaciones`,pos:true},
     {label:'G/P total €',value:gpEur!=null?fmt(gpEur):'—',delta:gpPct!=null?fmtPct(gpPct)+' simple':'',pos:gpEur>=0},
     {label:'Rentabilidad TWR',value:twrPct!=null?fmtPct(twrPct):'—',delta:hasNav?'ponderada por tiempo':'falta reconstruir',pos:twrPct>=0}
   ].map(m=>`<div class="metric"><div class="metric-label">${m.label}</div><div class="metric-value" style="color:${m.label.startsWith('G/')||m.label.startsWith('Rent')?(m.pos?'var(--green)':'var(--red)'):'var(--text)'}">${m.value}</div><div class="metric-delta ${m.pos?'pos':'neg'}">${m.delta}</div></div>`).join('');
   destroyChart('chartHist');
-  if(hasNav){charts['chartHist']=new Chart(document.getElementById('chartHist'),{type:'line',data:{labels:nav.map(n=>fmtMes(n.mes)),datasets:[{label:'Valor total',data:nav.map(n=>n.nav),borderColor:'#1A1916',backgroundColor:'rgba(26,25,22,0.05)',tension:0.3,fill:true,pointRadius:2,borderWidth:2},{label:'Portfolio',data:nav.map(n=>n.navPortfolio),borderColor:'#0C3F7A',backgroundColor:'transparent',tension:0.3,fill:false,pointRadius:0,borderWidth:1.5},{label:'Efectivo',data:nav.map(n=>n.navCash),borderColor:'#3B6D11',backgroundColor:'transparent',tension:0.2,fill:false,borderDash:[4,3],pointRadius:0,borderWidth:1.5},{label:'Coste',data:nav.map(n=>n.invested),borderColor:'#A09F9B',backgroundColor:'transparent',tension:0.2,fill:false,borderDash:[2,4],pointRadius:0,borderWidth:1},{label:'Total dep.',data:nav.map(n=>n.deposited||n.invested),borderColor:'rgba(59,109,17,0.7)',backgroundColor:'transparent',tension:0.2,fill:false,borderDash:[5,3],pointRadius:0,borderWidth:1.2}]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{position:'top',labels:{boxWidth:10,font:{size:11}}},tooltip:{callbacks:{label:ctx=>ctx.dataset.label+': '+fmt(ctx.raw)}}},scales:{x:{ticks:{font:{size:11},maxTicksLimit:14}},y:{min:0,ticks:{callback:v=>fmt(v),font:{size:11}}}}}});}
+  if(hasNav){charts['chartHist']=new Chart(document.getElementById('chartHist'),{type:'line',data:{labels:nav.map(n=>fmtMes(n.mes)),datasets:[{label:'Valor total',data:nav.map(n=>n.nav),borderColor:'#1A1916',backgroundColor:'rgba(26,25,22,0.05)',tension:0.3,fill:true,pointRadius:2,borderWidth:2},{label:'Portfolio',data:nav.map(n=>n.navPortfolio),borderColor:'#0C3F7A',backgroundColor:'transparent',tension:0.3,fill:false,pointRadius:0,borderWidth:1.5},{label:'Efectivo',data:nav.map(n=>n.navCash),borderColor:'#3B6D11',backgroundColor:'transparent',tension:0.2,fill:false,borderDash:[4,3],pointRadius:0,borderWidth:1.5},{label:'Capital inv.',data:nav.map(n=>n.invested),borderColor:'#A09F9B',backgroundColor:'transparent',tension:0.2,fill:false,borderDash:[2,4],pointRadius:0,borderWidth:1},{label:'Depositado',data:nav.map(n=>n.deposited||n.invested),borderColor:'rgba(59,109,17,0.7)',backgroundColor:'transparent',tension:0.2,fill:false,borderDash:[5,3],pointRadius:0,borderWidth:1.2}]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{position:'top',labels:{boxWidth:10,font:{size:11}}},tooltip:{callbacks:{label:ctx=>ctx.dataset.label+': '+fmt(ctx.raw)}}},scales:{x:{ticks:{font:{size:11},maxTicksLimit:14}},y:{min:0,ticks:{callback:v=>fmt(v),font:{size:11}}}}}});}
   else{
     // Aplica filtro de rango al historial manual también
     const h2=(histFilt.length>1?histFilt:hist);
