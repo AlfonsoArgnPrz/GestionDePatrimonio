@@ -185,7 +185,7 @@
         <button class="btn btn-sm" onclick="document.getElementById('csv-binance-file').click()" style="justify-content:center;font-size:11px;">↑ Binance</button>
       </div>
       <input type="file" id="import-file" accept=".json" style="display:none;" onchange="importData(event)">
-      <input type="file" id="csv-ibkr-file" accept=".csv" style="display:none;" onchange="importIBKRcsv(this.files[0])">
+      <input type="file" id="csv-ibkr-file" accept=".csv" multiple style="display:none;" onchange="importIBKRmulti(this.files)">
       <input type="file" id="csv-degiro-file" accept=".csv" style="display:none;" onchange="importDEGIROcsv(this.files[0])">
       <input type="file" id="csv-revolut-file" accept=".csv" style="display:none;" onchange="importRevolutcsv(this.files[0])">
       <input type="file" id="csv-binance-file" accept=".csv" style="display:none;" onchange="importBinancecsv(this.files[0])">
@@ -1088,7 +1088,41 @@ function deleteMeta(id){if(!confirm('¿Eliminar?'))return;S.metas=S.metas.filter
 function splitCsv(line){const result=[];let cur='',inQ=false;for(const c of line){if(c==='"')inQ=!inQ;else if(c===','&&!inQ){result.push(cur.trim().replace(/^"|"$/g,''));cur='';}else cur+=c;}result.push(cur.trim().replace(/^"|"$/g,''));return result;}
 function parseNum(v){if(!v||v.trim()==='-'||v.trim()==='')return 0;let s=v.trim().replace(/[€$£¥\s]/g,'');const neg=s.startsWith('(')&&s.endsWith(')');s=s.replace(/[()]/g,'');if(/e/i.test(s)){const n=parseFloat(s)||0;return neg?-Math.abs(n):n;}if(s.includes(',')&&s.includes('.')){s=s.lastIndexOf(',')>s.lastIndexOf('.')?s.replace(/\./g,'').replace(',','.'):s.replace(/,/g,'');}else if(s.includes(',')&&!s.includes('.')){const pts=s.split(',');s=pts.length===2&&pts[1].length<=2?s.replace(',','.'):s.replace(/,/g,'');}const n=parseFloat(s)||0;return neg?-Math.abs(n):n;}
 
-function importIBKRcsv(file){const reader=new FileReader();reader.onload=e=>{const text=e.target.result;const lines=text.split('\n').map(l=>l.trim()).filter(l=>l);let headerRow=null,dataRows=[];for(let i=0;i<lines.length;i++){const cols=splitCsv(lines[i]);if(cols[0]==='Transaction History'&&cols[1]==='Header'){headerRow=cols.slice(2);for(let j=i+1;j<lines.length;j++){const row=splitCsv(lines[j]);if(row[0]==='Transaction History'&&row[1]==='Data')dataRows.push(row.slice(2));}break;}}if(!headerRow||!dataRows.length){toast('CSV IBKR no reconocido');return;}const hi=name=>headerRow.indexOf(name);const iDate=hi('Date'),iDesc=hi('Description'),iType=hi('Transaction Type'),iSym=hi('Symbol'),iQty=hi('Quantity'),iPrice=hi('Price'),iPriceCur=hi('Price Currency'),iGross=hi('Gross Amount ')!==-1?hi('Gross Amount '):hi('Gross Amount'),iComm=hi('Commission'),iNet=hi('Net Amount');const txns=[];dataRows.forEach(row=>{const g=idx=>(idx>=0&&idx<row.length)?row[idx].trim():'';txns.push({date:g(iDate),type:g(iType),symbol:g(iSym)==='-'?null:g(iSym),desc:g(iDesc),qty:parseNum(g(iQty)),price:parseNum(g(iPrice)),priceCur:g(iPriceCur),gross:parseNum(g(iGross)),comm:parseNum(g(iComm)),net:parseNum(g(iNet))});});S.txns=txns;rebuildInversionesFromTxns(txns);save();toast(`✓ ${txns.length} transacciones IBKR importadas`);showPage('historial');setTimeout(()=>rebuildHistoricalNav(),300);};reader.readAsText(file,'UTF-8');}
+function parseIBKRtext(text){const lines=text.split('\n').map(l=>l.trim()).filter(l=>l);let headerRow=null,dataRows=[];for(let i=0;i<lines.length;i++){const cols=splitCsv(lines[i]);if(cols[0]==='Transaction History'&&cols[1]==='Header'){headerRow=cols.slice(2);for(let j=i+1;j<lines.length;j++){const row=splitCsv(lines[j]);if(row[0]==='Transaction History'&&row[1]==='Data')dataRows.push(row.slice(2));}break;}}if(!headerRow||!dataRows.length)return null;const hi=name=>headerRow.indexOf(name);const iDate=hi('Date'),iDesc=hi('Description'),iType=hi('Transaction Type'),iSym=hi('Symbol'),iQty=hi('Quantity'),iPrice=hi('Price'),iPriceCur=hi('Price Currency'),iGross=hi('Gross Amount ')!==-1?hi('Gross Amount '):hi('Gross Amount'),iComm=hi('Commission'),iNet=hi('Net Amount');const txns=[];dataRows.forEach(row=>{const g=idx=>(idx>=0&&idx<row.length)?row[idx].trim():'';txns.push({date:g(iDate),type:g(iType),symbol:g(iSym)==='-'?null:g(iSym),desc:g(iDesc),qty:parseNum(g(iQty)),price:parseNum(g(iPrice)),priceCur:g(iPriceCur),gross:parseNum(g(iGross)),comm:parseNum(g(iComm)),net:parseNum(g(iNet))});});return txns;}
+
+function importIBKRmulti(files){
+  if(!files||!files.length)return;
+  const fileArray=[...files];
+  let pending=fileArray.length,allTxns=[],errors=[];
+  fileArray.forEach(file=>{
+    const reader=new FileReader();
+    reader.onload=e=>{
+      const txns=parseIBKRtext(e.target.result);
+      if(txns)allTxns=allTxns.concat(txns);
+      else errors.push(file.name);
+      pending--;
+      if(pending===0){
+        // Fusionar con transacciones existentes y deduplicar
+        const existing=S.txns||[];
+        const combined=[...existing,...allTxns];
+        // Clave única: fecha+tipo+símbolo+qty+net
+        const seen=new Set();
+        S.txns=combined.filter(t=>{const k=`${t.date}|${t.type}|${t.symbol}|${t.qty}|${t.net}`;if(seen.has(k))return false;seen.add(k);return true;});
+        S.txns.sort((a,b)=>a.date.localeCompare(b.date));
+        rebuildInversionesFromTxns(S.txns);
+        save();
+        const msg=errors.length?` (${errors.length} archivos no reconocidos)`:'';
+        toast(`✓ ${S.txns.length} transacciones en total · ${fileArray.length} archivos${msg}`);
+        showPage('historial');
+        setTimeout(()=>rebuildHistoricalNav(),300);
+      }
+    };
+    reader.readAsText(file,'UTF-8');
+  });
+}
+
+// Mantener compatibilidad con llamadas antiguas
+function importIBKRcsv(file){importIBKRmulti([file]);}
 
 function rebuildInversionesFromTxns(txns){const positions={};txns.forEach(t=>{const sym=t.symbol;if(!sym)return;if(t.type==='Buy'){if(!positions[sym])positions[sym]={qty:0,totalCost:0,dividends:0,firstDate:t.date,desc:t.desc};positions[sym].qty+=t.qty;positions[sym].totalCost+=Math.abs(t.net);if(!positions[sym].firstDate||t.date<positions[sym].firstDate)positions[sym].firstDate=t.date;}else if(t.type==='Sell'){if(positions[sym]&&positions[sym].qty>0){const avg=positions[sym].totalCost/positions[sym].qty;positions[sym].totalCost-=avg*Math.abs(t.qty);positions[sym].qty-=Math.abs(t.qty);}}else if(t.type==='Dividend'){if(!positions[sym])positions[sym]={qty:0,totalCost:0,dividends:0,firstDate:t.date,desc:t.desc};positions[sym].dividends+=Math.abs(t.gross);}else if(t.type==='Foreign Tax Withholding'){if(positions[sym])positions[sym].dividends-=Math.abs(t.gross);}else if(t.type==='Payment in Lieu'){if(positions[sym])positions[sym].dividends+=Math.abs(t.gross);}});Object.entries(positions).forEach(([sym,p])=>{if(p.qty<0.001&&p.totalCost<1)return;const existing=S.inversiones.find(i=>i.notas===sym);if(existing){existing.qty=parseFloat(p.qty.toFixed(6));existing.coste=parseFloat(p.totalCost.toFixed(2));existing.dividendos=parseFloat(p.dividends.toFixed(2));existing.fecha=p.firstDate||existing.fecha;existing.broker='IBKR';}else{S.inversiones.push({id:uid(),nombre:p.desc||sym,tipo:'Acción',valor:parseFloat(p.totalCost.toFixed(2)),coste:parseFloat(p.totalCost.toFixed(2)),dividendos:parseFloat(p.dividends.toFixed(2)),fecha:p.firstDate||'',notas:sym,qty:parseFloat(p.qty.toFixed(6)),broker:'IBKR'});}});}
 
