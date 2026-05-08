@@ -245,7 +245,7 @@
       <div class="page-header">
         <div><div class="page-title">Evolución patrimonial</div><div class="page-subtitle" id="hist-subtitle">Precios históricos reales · Yahoo Finance</div></div>
         <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;">
-          <button class="btn btn-primary" id="btn-rebuild" onclick="rebuildHistoricalNav()">↻ Reconstruir con precios reales</button>
+          <button class="btn btn-primary" id="btn-rebuild" onclick="rebuildHistoricalNav()">↻ Reconstruir histórico</button>
           <span id="rebuild-status" style="font-size:11px;color:var(--text3);font-family:var(--mono);"></span>
         </div>
       </div>
@@ -718,21 +718,107 @@ function computeNAV(monthlyStates,historicalPrices,historicalFX) {
 }
 async function rebuildHistoricalNav() {
   const btn=document.getElementById('btn-rebuild');const statusEl=document.getElementById('rebuild-status');
-  if(btn){btn.disabled=true;btn.textContent='⟳ Calculando…';}
-  if(statusEl){statusEl.textContent='Probando conexión…';statusEl.style.color='var(--text3)';}
-  try{const testR=await fetch('./prices.json',{method:'HEAD',cache:'no-cache'});if(!testR.ok)throw new Error('prices.json no encontrado');}
-  catch(e){if(statusEl){statusEl.innerHTML='✗ prices.json no encontrado<br><small>Ve a GitHub → Actions → "Fetch historical prices" → Run workflow</small>';statusEl.style.color='var(--red)';}if(btn){btn.disabled=false;btn.textContent='↻ Reconstruir con precios reales';}return;}
+  if(btn){btn.disabled=true;btn.textContent='⟳ Descargando…';}
+  if(statusEl){statusEl.textContent='Obteniendo tipos de cambio…';statusEl.style.color='var(--text3)';}
   try{
-    const monthlyStates=buildMonthlyPortfolioStates();
-    if(statusEl)statusEl.textContent=`${monthlyStates.length} meses · descargando precios históricos…`;
-    const{historicalPrices,historicalFX}=await fetchHistoricalPrices(monthlyStates,statusEl);
-    const nav=computeNAV(monthlyStates,historicalPrices,historicalFX);
-    S.historicalNav=nav;save();
-    const validMonths=nav.filter(n=>n.navPortfolio>0).length;
-    if(statusEl){statusEl.textContent=`✓ ${nav.length} meses reconstruidos · ${validMonths} con precio real`;statusEl.style.color=validMonths>0?'var(--green)':'var(--amber)';}
-    toast(`NAV histórico calculado (${validMonths} meses)`);
-  }catch(e){if(statusEl){statusEl.textContent='✗ '+e.message;statusEl.style.color='var(--red)';}toast('Error al reconstruir histórico');}
-  if(btn){btn.disabled=false;btn.textContent='↻ Reconstruir con precios reales';}
+    // 1. Tipos de cambio actuales
+    const fxRates={EUR:1};
+    await Promise.allSettled(['USDEUR=X','GBPEUR=X','DKKEUR=X','HKDEUR=X','NOKEUR=X'].map(async pair=>{
+      try{const r=await fetch('https://corsproxy.io/?'+encodeURIComponent('https://query2.finance.yahoo.com/v8/finance/chart/'+pair+'?interval=1d&range=1d'));
+        const d=await r.json();const p=d?.chart?.result?.[0]?.meta?.regularMarketPrice;if(p)fxRates[pair.replace('EUR=X','')]=p;}catch(e){}
+    }));
+    const toEur=(price,cur)=>{const c=(cur||'USD').toUpperCase();if(c==='EUR')return price;if(c==='GBP')return(price/100)*(fxRates['GBP']||0.86);return price*(fxRates[c]!==undefined?fxRates[c]:(fxRates['USD']||0.92));};
+
+    const hasTxns=(S.txns||[]).length>0;
+    const nowMes=new Date().toISOString().slice(0,7);
+
+    if(hasTxns){
+      // ── MODO PRECISO: usa transacciones IBKR para posiciones exactas por mes ──
+      const monthlyStates=buildMonthlyPortfolioStates();
+      // Símbolos únicos que aparecen en algún mes
+      const allSyms=new Set();
+      monthlyStates.forEach(ms=>Object.values(ms.positions).forEach(p=>allSyms.add(p.yahooSym)));
+      if(!allSyms.size){toast('Sin posiciones en las transacciones');if(btn){btn.disabled=false;btn.textContent='↻ Reconstruir';}return;}
+
+      // Precios mensuales por símbolo Yahoo {yahooSym: {mes: {price,currency}}}
+      const priceBySymMes={};let done=0;
+      if(statusEl)statusEl.textContent=`Modo preciso · descargando ${allSyms.size} símbolos…`;
+      await Promise.allSettled([...allSyms].map(async sym=>{
+        try{
+          const r=await fetch('https://corsproxy.io/?'+encodeURIComponent('https://query2.finance.yahoo.com/v8/finance/chart/'+encodeURIComponent(sym)+'?interval=1mo&range=10y'));
+          const d=await r.json();const res=d?.chart?.result?.[0];if(!res)return;
+          const ts=res.timestamp||[];
+          const closes=res.indicators?.adjclose?.[0]?.adjclose||res.indicators?.quote?.[0]?.close||[];
+          const currency=res.meta?.currency||'USD';
+          const byMes={};ts.forEach((t,i)=>{if(closes[i]!=null)byMes[new Date(t*1000).toISOString().slice(0,7)]={price:closes[i],currency};});
+          priceBySymMes[sym]=byMes;done++;
+          if(statusEl)statusEl.textContent=`Modo preciso · descargando precios (${done}/${allSyms.size})…`;
+        }catch(e){}
+      }));
+
+      // NAV mensual usando posiciones exactas de cada mes
+      const nav=[];
+      for(const state of monthlyStates){
+        let portfolioVal=0,covered=0,total=Object.keys(state.positions).length;
+        for(const[,pos]of Object.entries(state.positions)){
+          const byMes=priceBySymMes[pos.yahooSym];if(!byMes)continue;
+          const entry=byMes[state.mes]||(()=>{const prev=Object.keys(byMes).filter(m=>m<=state.mes).sort().pop();return prev?byMes[prev]:null;})();
+          if(!entry)continue;
+          portfolioVal+=toEur(entry.price,entry.currency)*pos.qty;covered++;
+        }
+        if(portfolioVal>0||state.cumDeposited>0){
+          const cashVal=state.mes===nowMes?totalCuentas():Math.max(0,(state.cumDeposited||0)-(state.cumSpent||0));
+          nav.push({mes:state.mes,nav:parseFloat((portfolioVal+cashVal).toFixed(2)),navPortfolio:parseFloat(portfolioVal.toFixed(2)),navCash:parseFloat(cashVal.toFixed(2)),invested:parseFloat((state.cumSpent||0).toFixed(2)),deposited:parseFloat((state.cumDeposited||0).toFixed(2)),coverage:total>0?Math.round(covered/total*100):0,source:covered>0?'yahoo':'estimado'});
+        }
+      }
+      S.historicalNav=nav.filter(n=>n.nav>0);save();
+      if(statusEl){statusEl.textContent=`✓ ${nav.length} meses · transacciones IBKR · ${done}/${allSyms.size} símbolos`;statusEl.style.color='var(--green)';}
+      toast(`Histórico preciso: ${nav.length} meses`);
+
+    }else{
+      // ── MODO SIMPLE: cantidades actuales para todo el período ──
+      const invs=S.inversiones.filter(i=>i.notas);
+      if(!invs.length){toast('No hay posiciones con símbolo Yahoo');if(btn){btn.disabled=false;btn.textContent='↻ Reconstruir';}return;}
+      let done=0;
+      const priceHistory={};// id -> [{mes,price,currency}]
+      if(statusEl)statusEl.textContent=`Modo simple · descargando ${invs.length} activos…`;
+      await Promise.allSettled(invs.map(async inv=>{
+        const sym=YAHOO_TICKER_MAP[inv.notas]||inv.notas;
+        try{
+          const r=await fetch('https://corsproxy.io/?'+encodeURIComponent('https://query2.finance.yahoo.com/v8/finance/chart/'+encodeURIComponent(sym)+'?interval=1mo&range=5y'));
+          const d=await r.json();const res=d?.chart?.result?.[0];if(!res)return;
+          const ts=res.timestamp||[];
+          const closes=res.indicators?.adjclose?.[0]?.adjclose||res.indicators?.quote?.[0]?.close||[];
+          const currency=res.meta?.currency||'USD';
+          priceHistory[inv.id]=ts.map((t,i)=>({mes:new Date(t*1000).toISOString().slice(0,7),price:closes[i],currency})).filter(p=>p.price!=null);
+          done++;if(statusEl)statusEl.textContent=`Modo simple · descargando precios (${done}/${invs.length})…`;
+        }catch(e){}
+      }));
+      const allMeses=new Set();Object.values(priceHistory).forEach(arr=>arr.forEach(p=>allMeses.add(p.mes)));S.historial.forEach(h=>allMeses.add(h.mes));
+      let cumDep=0;const aportByMes={};S.historial.forEach(h=>{aportByMes[h.mes]=(h.aportacion||0);});
+      const nav=[];
+      for(const mes of [...allMeses].sort()){
+        cumDep+=(aportByMes[mes]||0);
+        let portfolioVal=0,covered=0;
+        for(const inv of invs){
+          const hist=priceHistory[inv.id];if(!hist?.length)continue;
+          const entry=hist.filter(p=>p.mes<=mes).sort((a,b)=>b.mes.localeCompare(a.mes))[0];if(!entry)continue;
+          portfolioVal+=toEur(entry.price,entry.currency)*(inv.qty||1);covered++;
+        }
+        if(portfolioVal>0){
+          const cashVal=mes===nowMes?totalCuentas():0;
+          nav.push({mes,nav:parseFloat((portfolioVal+cashVal).toFixed(2)),navPortfolio:parseFloat(portfolioVal.toFixed(2)),navCash:parseFloat(cashVal.toFixed(2)),invested:parseFloat(cumDep.toFixed(2)),deposited:parseFloat(cumDep.toFixed(2)),coverage:invs.length>0?Math.round(covered/invs.length*100):0,source:'yahoo'});
+        }
+      }
+      S.historicalNav=nav;save();
+      if(statusEl){statusEl.textContent=`✓ ${nav.length} meses · modo simple · ${done}/${invs.length} activos`;statusEl.style.color=nav.length>0?'var(--green)':'var(--amber)';}
+      toast(`Histórico calculado: ${nav.length} meses`);
+    }
+  }catch(e){
+    if(statusEl){statusEl.textContent='✗ '+e.message;statusEl.style.color='var(--red)';}
+    toast('Error: '+e.message);
+  }
+  if(btn){btn.disabled=false;btn.textContent='↻ Reconstruir';}
   renderHistorial();
 }
 function renderHistorial() {
