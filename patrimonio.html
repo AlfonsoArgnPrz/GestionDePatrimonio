@@ -1124,109 +1124,124 @@ function splitCsv(line){const result=[];let cur='',inQ=false;for(const c of line
 function parseNum(v){if(!v||v.trim()==='-'||v.trim()==='')return 0;let s=v.trim().replace(/[€$£¥\s]/g,'');const neg=s.startsWith('(')&&s.endsWith(')');s=s.replace(/[()]/g,'');if(/e/i.test(s)){const n=parseFloat(s)||0;return neg?-Math.abs(n):n;}if(s.includes(',')&&s.includes('.')){s=s.lastIndexOf(',')>s.lastIndexOf('.')?s.replace(/\./g,'').replace(',','.'):s.replace(/,/g,'');}else if(s.includes(',')&&!s.includes('.')){const pts=s.split(',');s=pts.length===2&&pts[1].length<=2?s.replace(',','.'):s.replace(/,/g,'');}const n=parseFloat(s)||0;return neg?-Math.abs(n):n;}
 
 function normalizeIBKRDate(s){
-  if(!s)return '';
-  // "2024-01-15, 10:30:00" or "2024-01-15 10:30:00" → "2024-01-15"
-  s=s.trim().replace(/["]/g,'');
-  const m=s.match(/^(\d{4}-\d{2}-\d{2})/);if(m)return m[1];
-  // "01/15/2024" → "2024-01-15"
+  if(!s)return'';
+  s=s.trim().replace(/^"|"$/g,'');
+  const m1=s.match(/^(\d{4}-\d{2}-\d{2})/);if(m1)return m1[1];
   const m2=s.match(/^(\d{2})\/(\d{2})\/(\d{4})/);if(m2)return`${m2[3]}-${m2[1]}-${m2[2]}`;
-  return s.slice(0,10);
+  const m3=s.match(/^(\d{1,2})-(\w{3})-(\d{4})/i);
+  if(m3){const mo={jan:'01',feb:'02',mar:'03',apr:'04',may:'05',jun:'06',jul:'07',aug:'08',sep:'09',oct:'10',nov:'11',dec:'12'};return`${m3[3]}-${mo[m3[2].toLowerCase()]||'01'}-${m3[1].padStart(2,'0')}`;}
+  return'';
 }
 
 function parseIBKRtext(text){
   const lines=text.split('\n').map(l=>l.trim()).filter(l=>l);
-  const txns=[];
 
-  // ── Formato 1: Flex Query (Transaction History) ──────────────────────────
-  let headerRow=null,dataRows=[];
-  for(let i=0;i<lines.length;i++){
-    const cols=splitCsv(lines[i]);
-    if(cols[0]==='Transaction History'&&cols[1]==='Header'){
-      headerRow=cols.slice(2);
-      for(let j=i+1;j<lines.length;j++){const row=splitCsv(lines[j]);if(row[0]==='Transaction History'&&row[1]==='Data')dataRows.push(row.slice(2));}
-      break;
-    }
-  }
-  if(headerRow&&dataRows.length){
-    const hi=name=>headerRow.indexOf(name);
-    const iDate=hi('Date'),iDesc=hi('Description'),iType=hi('Transaction Type'),iSym=hi('Symbol'),
-          iQty=hi('Quantity'),iPrice=hi('Price'),iPriceCur=hi('Price Currency'),
-          iGross=hi('Gross Amount ')!==-1?hi('Gross Amount '):hi('Gross Amount'),
-          iComm=hi('Commission'),iNet=hi('Net Amount');
-    dataRows.forEach(row=>{
-      const g=idx=>(idx>=0&&idx<row.length)?row[idx].trim():'';
-      txns.push({date:normalizeIBKRDate(g(iDate)),type:g(iType),symbol:g(iSym)==='-'?null:g(iSym),
-        desc:g(iDesc),qty:Math.abs(parseNum(g(iQty))),price:parseNum(g(iPrice)),
-        priceCur:g(iPriceCur),gross:parseNum(g(iGross)),comm:parseNum(g(iComm)),net:Math.abs(parseNum(g(iNet)))});
-    });
-    return txns.length?txns:null;
-  }
-
-  // ── Formato 2: Activity Statement (secciones Trades + Deposits) ───────────
-  let tradesHdr=null,depositsHdr=null;
+  // Descubrir secciones
+  const secHdrs={},secData={};
   for(const line of lines){
     const cols=splitCsv(line);if(cols.length<3)continue;
-    const sec=cols[0],rtype=cols[1],row=cols.slice(2);
-    const g=hdr=>{ const idx=hdr.indexOf(sec==='Trades'?sec:sec); // unused, use closure below
-      return name=>{const i=hdr.indexOf(name);return(i>=0&&i<row.length)?row[i].trim():'';};
-    };
+    const sec=cols[0].trim(),rtype=cols[1].trim(),rest=cols.slice(2).map(c=>c.trim());
+    if(rtype==='Header')secHdrs[sec]=rest;
+    else if(rtype==='Data'){if(!secData[sec])secData[sec]=[];secData[sec].push(rest);}
+  }
+  const foundSecs=Object.keys(secHdrs);
+  if(!foundSecs.length)return{txns:null,debug:'No se encontraron secciones Header/Data en el CSV'};
 
-    if(sec==='Trades'){
-      if(rtype==='Header'){tradesHdr=row;continue;}
-      if(rtype!=='Data'||!tradesHdr)continue;
-      const get=name=>{const i=tradesHdr.indexOf(name);return(i>=0&&i<row.length)?row[i].trim():'';};
-      const sym=get('Symbol');if(!sym||sym==='Symbol'||sym==='')continue;
-      // Saltar opciones y futuros
-      const cat=(get('Asset Category')||get('Asset Class')||'').toLowerCase();
-      if(cat.includes('option')||cat.includes('future')||cat.includes('bond'))continue;
-      const rawDate=get('Date/Time')||get('TradeDate')||get('Date');
-      const date=normalizeIBKRDate(rawDate);if(!date)continue;
-      const rawQty=parseNum(get('Quantity'));if(rawQty===0)continue;
+  const txns=[];
+  // Columna helper: busca por nombre exacto o parcial
+  const fc=(hdr,...names)=>{for(const n of names){const i=hdr.findIndex(h=>h===n||h.toLowerCase()===n.toLowerCase());if(i>=0)return i;}
+    for(const n of names){const i=hdr.findIndex(h=>h.toLowerCase().includes(n.toLowerCase()));if(i>=0)return i;}return-1;};
+  const gRow=(row,i)=>(i>=0&&i<row.length)?row[i].trim():'';
+
+  // ── Operaciones (español) / Trades (inglés) ───────────────────────────────
+  const tradeSec=foundSecs.find(s=>s==='Operaciones'||s==='Trades'||s.toLowerCase().includes('operacion')||s.toLowerCase().includes('trade'));
+  if(tradeSec&&secData[tradeSec]?.length){
+    const hdr=secHdrs[tradeSec];
+    const iDisc=fc(hdr,'DataDiscriminator');
+    const iCat =fc(hdr,'Categoría de activo','Asset Category','Asset Class');
+    const iCur =fc(hdr,'Divisa','Currency');
+    const iSym =fc(hdr,'Símbolo','Symbol');
+    const iDate=fc(hdr,'Fecha/Hora','Date/Time','Date','Fecha');
+    const iQty =fc(hdr,'Cantidad','Quantity');
+    const iPrice=fc(hdr,'Precio trans.','T. Price','Price','Precio');
+    const iProc=fc(hdr,'Productos','Proceeds');
+    const iComm=fc(hdr,'Tarifa/com.','Comm/Fee','Commission','Comisión');
+    const iBasis=fc(hdr,'Básico','Basis');
+    for(const row of secData[tradeSec]){
+      const disc=gRow(row,iDisc);
+      if(disc&&disc!=='Order')continue; // saltar SubTotal, etc.
+      const sym=gRow(row,iSym);
+      if(!sym||sym==='')continue;
+      const cat=gRow(row,iCat).toLowerCase();
+      if(cat.includes('opción')||cat.includes('option')||cat.includes('futuro')||cat.includes('future'))continue;
+      const date=normalizeIBKRDate(gRow(row,iDate));
+      if(!date||date<'2000-01-01')continue;
+      const rawQty=parseNum(gRow(row,iQty));
+      if(rawQty===0)continue;
       const type=rawQty>0?'Buy':'Sell';
-      const price=parseNum(get('T. Price')||get('Price'));
-      const currency=get('Currency')||'USD';
-      const comm=parseNum(get('Comm/Fee')||get('Commission/Fee')||get('Commission'));
-      const proceeds=parseNum(get('Proceeds'));
-      const net=Math.abs(proceeds)+comm; // comm es negativo en IBKR
+      const price=parseNum(gRow(row,iPrice));
+      const currency=gRow(row,iCur)||'EUR';
+      const comm=parseNum(gRow(row,iComm));       // negativo en IBKR
+      const proceeds=parseNum(gRow(row,iProc));   // negativo para compras
+      const basis=parseNum(gRow(row,iBasis));     // positivo = coste total para compras
+      // net = coste total pagado (compras) o ingreso neto (ventas)
+      const net=type==='Buy'
+        ?(basis>0?Math.abs(basis):Math.abs(proceeds)+Math.abs(comm))
+        :(Math.abs(proceeds)-Math.abs(comm));
       txns.push({date,type,symbol:sym,desc:sym,qty:Math.abs(rawQty),price,priceCur:currency,gross:Math.abs(proceeds),comm,net:Math.abs(net)});
     }
+  }
 
-    if(sec==='Deposits & Withdrawals'){
-      if(rtype==='Header'){depositsHdr=row;continue;}
-      if(rtype!=='Data'||!depositsHdr)continue;
-      const get=name=>{const i=depositsHdr.indexOf(name);return(i>=0&&i<row.length)?row[i].trim():'';};
-      const rawDate=get('Settle Date')||get('Date');
-      const date=normalizeIBKRDate(rawDate);if(!date)continue;
-      const amount=parseNum(get('Amount'));
-      if(amount>0)txns.push({date,type:'Deposit',symbol:null,desc:'Deposit',qty:0,price:0,priceCur:'USD',gross:amount,comm:0,net:amount});
+  // ── Depósitos y retiradas (español) / Deposits & Withdrawals (inglés) ──────
+  const depSec=foundSecs.find(s=>s.toLowerCase().includes('depósito')||s.toLowerCase().includes('deposit')||s.toLowerCase().includes('retirada')||s.toLowerCase().includes('withdrawal'));
+  if(depSec&&secData[depSec]?.length){
+    const hdr=secHdrs[depSec];
+    const iDate=fc(hdr,'Fecha de liquidación','Settle Date','Date','Fecha');
+    const iAmt =fc(hdr,'Cantidad','Amount','Importe');
+    for(const row of secData[depSec]){
+      const date=normalizeIBKRDate(gRow(row,iDate));
+      if(!date)continue;
+      const amount=parseNum(gRow(row,iAmt));
+      if(amount>0)txns.push({date,type:'Deposit',symbol:null,desc:'Depósito',qty:0,price:0,priceCur:'EUR',gross:amount,comm:0,net:amount});
     }
   }
-  return txns.length?txns:null;
+
+  const ops=txns.filter(t=>t.type==='Buy'||t.type==='Sell').length;
+  const deps=txns.filter(t=>t.type==='Deposit').length;
+  const debug=`Secciones: [${foundSecs.join(', ')}] → ${ops} operaciones, ${deps} depósitos`;
+  return{txns:txns.length?txns:null,debug};
 }
 
 function importIBKRmulti(files){
   if(!files||!files.length)return;
   const fileArray=[...files];
-  let pending=fileArray.length,allTxns=[],errors=[];
+  let pending=fileArray.length,allTxns=[],debugMsgs=[];
   fileArray.forEach(file=>{
     const reader=new FileReader();
     reader.onload=e=>{
-      const txns=parseIBKRtext(e.target.result);
-      if(txns)allTxns=allTxns.concat(txns);
-      else errors.push(file.name);
+      const result=parseIBKRtext(e.target.result);
+      const txns=result?.txns;
+      const debug=result?.debug||'Sin info';
+      debugMsgs.push(`${file.name}: ${debug}`);
+      if(txns&&txns.length)allTxns=allTxns.concat(txns);
       pending--;
       if(pending===0){
+        // Mostrar diagnóstico en la UI
+        const statusEl=document.getElementById('rebuild-status');
+        if(statusEl){statusEl.textContent=debugMsgs.join(' · ');statusEl.style.color=allTxns.length?'var(--green)':'var(--red)';}
+        if(!allTxns.length){
+          toast('⚠ No se encontraron operaciones. Ver diagnóstico bajo el botón.');
+          return;
+        }
         // Fusionar con transacciones existentes y deduplicar
         const existing=S.txns||[];
         const combined=[...existing,...allTxns];
-        // Clave única: fecha+tipo+símbolo+qty+net
         const seen=new Set();
         S.txns=combined.filter(t=>{const k=`${t.date}|${t.type}|${t.symbol}|${t.qty}|${t.net}`;if(seen.has(k))return false;seen.add(k);return true;});
         S.txns.sort((a,b)=>a.date.localeCompare(b.date));
         rebuildInversionesFromTxns(S.txns);
         save();
-        const msg=errors.length?` (${errors.length} archivos no reconocidos)`:'';
-        toast(`✓ ${S.txns.length} transacciones en total · ${fileArray.length} archivos${msg}`);
+        toast(`✓ ${S.txns.length} operaciones · ${fileArray.length} archivos`);
         showPage('historial');
         setTimeout(()=>rebuildHistoricalNav(),300);
       }
