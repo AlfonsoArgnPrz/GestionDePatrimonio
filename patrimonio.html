@@ -738,10 +738,15 @@ async function rebuildHistoricalNav() {
 function renderHistorial() {
   const nav=filterByRange(S.historicalNav||[]);const hasNav=nav.length>0;
   const hist=[...S.historial].sort((a,b)=>a.mes.localeCompare(b.mes));
+  const histFilt=filterByRange([...hist]);
   const latestNav=hasNav?nav[nav.length-1]:null;const firstNav=hasNav?nav[0]:null;
   const totalAport=S.historial.reduce((a,h)=>a+(h.aportacion||0),0);
-  const gpEur=latestNav?latestNav.nav-latestNav.invested:null;
-  const gpPct=(latestNav&&latestNav.invested>0)?gpEur/latestNav.invested*100:null;
+  const invVal=totalInversiones(), invCoste=totalCosteInv();
+  // Depósitos acumulados por mes (para fallback)
+  let _cdAcc=0;const cumDepAll={};hist.forEach(h=>{_cdAcc+=(h.aportacion||0);cumDepAll[h.mes]=_cdAcc;});
+  // G/P: usa NAV histórica si disponible, si no usa precios actuales vs coste
+  const gpEur=latestNav?latestNav.nav-latestNav.invested:(invCoste>0?invVal-invCoste:null);
+  const gpPct=latestNav?(latestNav.invested>0?gpEur/latestNav.invested*100:null):(invCoste>0?(invVal-invCoste)/invCoste*100:null);
   let twrPct=null;
   if(hasNav&&nav.length>1){let twr=1;for(let i=1;i<nav.length;i++){const prevNav=nav[i-1].nav;if(prevNav>0){const cf=(nav[i].invested-nav[i-1].invested);twr*=nav[i].nav/(prevNav+cf);}}twrPct=(twr-1)*100;}
   document.getElementById('hist-kpis').innerHTML=[
@@ -752,9 +757,46 @@ function renderHistorial() {
   ].map(m=>`<div class="metric"><div class="metric-label">${m.label}</div><div class="metric-value" style="color:${m.label.startsWith('G/')||m.label.startsWith('Rent')?(m.pos?'var(--green)':'var(--red)'):'var(--text)'}">${m.value}</div><div class="metric-delta ${m.pos?'pos':'neg'}">${m.delta}</div></div>`).join('');
   destroyChart('chartHist');
   if(hasNav){charts['chartHist']=new Chart(document.getElementById('chartHist'),{type:'line',data:{labels:nav.map(n=>fmtMes(n.mes)),datasets:[{label:'Valor total',data:nav.map(n=>n.nav),borderColor:'#1A1916',backgroundColor:'rgba(26,25,22,0.05)',tension:0.3,fill:true,pointRadius:2,borderWidth:2},{label:'Portfolio',data:nav.map(n=>n.navPortfolio),borderColor:'#0C3F7A',backgroundColor:'transparent',tension:0.3,fill:false,pointRadius:0,borderWidth:1.5},{label:'Efectivo',data:nav.map(n=>n.navCash),borderColor:'#3B6D11',backgroundColor:'transparent',tension:0.2,fill:false,borderDash:[4,3],pointRadius:0,borderWidth:1.5},{label:'Coste',data:nav.map(n=>n.invested),borderColor:'#A09F9B',backgroundColor:'transparent',tension:0.2,fill:false,borderDash:[2,4],pointRadius:0,borderWidth:1},{label:'Total dep.',data:nav.map(n=>n.deposited||n.invested),borderColor:'rgba(59,109,17,0.7)',backgroundColor:'transparent',tension:0.2,fill:false,borderDash:[5,3],pointRadius:0,borderWidth:1.2}]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{position:'top',labels:{boxWidth:10,font:{size:11}}},tooltip:{callbacks:{label:ctx=>ctx.dataset.label+': '+fmt(ctx.raw)}}},scales:{x:{ticks:{font:{size:11},maxTicksLimit:14}},y:{min:0,ticks:{callback:v=>fmt(v),font:{size:11}}}}}});}
-  else{const hist2=[...S.historial].sort((a,b)=>a.mes.localeCompare(b.mes));let cd=0;const cumDep=hist2.map(h=>{cd+=(h.aportacion||0);return cd;});charts['chartHist']=new Chart(document.getElementById('chartHist'),{type:'line',data:{labels:hist2.map(h=>fmtMes(h.mes)),datasets:[{label:'Total dep.',data:cumDep,borderColor:'#A09F9B',backgroundColor:'rgba(26,25,22,0.05)',tension:0.2,fill:true,pointRadius:2,borderWidth:1.5}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{font:{size:11},maxTicksLimit:14}},y:{min:0,ticks:{callback:v=>fmt(v),font:{size:11}}}}}});}
+  else{
+    // Aplica filtro de rango al historial manual también
+    const h2=(histFilt.length>1?histFilt:hist);
+    const cumDep=h2.map(h=>cumDepAll[h.mes]||0);
+    const cdTotal=cumDepAll[hist[hist.length-1]?.mes]||0;
+    // Añade punto actual con valor de mercado si hay precios vivos
+    const nowMes=new Date().toISOString().slice(0,7);
+    const labels=h2.map(h=>fmtMes(h.mes));
+    const depData=[...cumDep];
+    const datasets=[{label:'Capital acumulado',data:depData,borderColor:'#A09F9B',backgroundColor:'rgba(26,25,22,0.05)',tension:0.2,fill:true,pointRadius:2,borderWidth:1.5}];
+    if(invVal>0&&!h2.some(h=>h.mes===nowMes)){
+      labels.push(fmtMes(nowMes));
+      depData.push(cdTotal);
+      datasets.push({label:'Valor mercado hoy',data:[...Array(h2.length).fill(null),invVal],borderColor:'#0C3F7A',backgroundColor:'transparent',tension:0,pointRadius:6,pointBackgroundColor:'#0C3F7A',borderWidth:2,borderDash:[4,3]});
+    }
+    charts['chartHist']=new Chart(document.getElementById('chartHist'),{type:'line',data:{labels,datasets},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:datasets.length>1,position:'top',labels:{boxWidth:10,font:{size:11}}},tooltip:{callbacks:{label:ctx=>ctx.dataset.label+': '+fmt(ctx.raw)}}},scales:{x:{ticks:{font:{size:11},maxTicksLimit:14}},y:{min:0,ticks:{callback:v=>fmt(v),font:{size:11}}}}}});
+  }
   destroyChart('chartHistMonthly');
-  if(hasNav&&nav.length>1){const mRets=nav.slice(1).map((n,i)=>{const prev=nav[i].nav;const flow=n.invested-nav[i].invested;return prev>0?parseFloat(((n.nav-prev-flow)/prev*100).toFixed(2)):0;});charts['chartHistMonthly']=new Chart(document.getElementById('chartHistMonthly'),{type:'bar',data:{labels:nav.slice(1).map(n=>fmtMes(n.mes)),datasets:[{data:mRets,backgroundColor:mRets.map(r=>r>=0?'rgba(45,106,45,0.7)':'rgba(163,45,45,0.7)'),borderRadius:3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>fmtPct(ctx.raw)}}},scales:{x:{ticks:{font:{size:9},maxTicksLimit:12}},y:{ticks:{callback:v=>v+'%',font:{size:10}}}}}});}
+  if(hasNav&&nav.length>1){
+    const mRets=nav.slice(1).map((n,i)=>{const prev=nav[i].nav;const flow=n.invested-nav[i].invested;return prev>0?parseFloat(((n.nav-prev-flow)/prev*100).toFixed(2)):0;});
+    charts['chartHistMonthly']=new Chart(document.getElementById('chartHistMonthly'),{type:'bar',data:{labels:nav.slice(1).map(n=>fmtMes(n.mes)),datasets:[{data:mRets,backgroundColor:mRets.map(r=>r>=0?'rgba(45,106,45,0.7)':'rgba(163,45,45,0.7)'),borderRadius:3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>fmtPct(ctx.raw)}}},scales:{x:{ticks:{font:{size:9},maxTicksLimit:12}},y:{ticks:{callback:v=>v+'%',font:{size:10}}}}}});
+  } else {
+    // Fallback: rentabilidad desde historial manual (aportacion-adjusted)
+    const h2=histFilt.length>1?histFilt:hist;
+    const mRets=h2.slice(1).map((h,i)=>{
+      const prev=sumHist(h2[i])||cumDepAll?.[h2[i].mes]||0;
+      const curr=sumHist(h)||cumDepAll?.[h.mes]||0;
+      const flow=h.aportacion||0;
+      const denom=prev+flow;
+      return denom>0?parseFloat(((curr-prev-flow)/denom*100).toFixed(2)):0;
+    });
+    if(mRets.some(r=>Math.abs(r)>0.01)){
+      charts['chartHistMonthly']=new Chart(document.getElementById('chartHistMonthly'),{type:'bar',data:{labels:h2.slice(1).map(h=>fmtMes(h.mes)),datasets:[{data:mRets,backgroundColor:mRets.map(r=>r>=0?'rgba(45,106,45,0.7)':'rgba(163,45,45,0.7)'),borderRadius:3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>fmtPct(ctx.raw)}}},scales:{x:{ticks:{font:{size:9},maxTicksLimit:12}},y:{ticks:{callback:v=>v+'%',font:{size:10}}}}}});
+    } else {
+      const el=document.getElementById('chartHistMonthly');
+      const ctx=el.getContext('2d');ctx.clearRect(0,0,el.width,el.height);
+      ctx.fillStyle='var(--text3)';ctx.font='12px var(--sans)';ctx.textAlign='center';
+      ctx.fillText('Pulsa "↻ Reconstruir" para ver rentabilidad mensual real',el.width/2||180,70);
+    }
+  }
   destroyChart('chartStack');
   const topInv=[...S.inversiones].sort((a,b)=>b.valor-a.valor).slice(0,10);
   const palette=['#0C3F7A','#1455A4','#1B6AC5','#3B8EE0','#63ADE8','#3B6D11','#5A9E1A','#7A4F0A','#BA7517','#A32D2D'];
